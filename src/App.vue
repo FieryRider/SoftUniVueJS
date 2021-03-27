@@ -1,25 +1,24 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
+    <Header />
+
+
   </div>
 </template>
 
 <script>
-
+import Header from "@/components/core/Header.vue"
 export default {
-  name: 'App',
+  name: "App",
   components: {
+    Header
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+@import './assets/styles/normalize.css';
+* {
+  font-family: 'Source Sans Pro', Arial, sans-serif;
 }
 </style>

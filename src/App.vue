@@ -20,4 +20,8 @@ export default {
 * {
   font-family: 'Source Sans Pro', Arial, sans-serif;
 }
+.o-content-wrapper {
+  width: 1250px;
+  margin: 0 auto;
+}
 </style>

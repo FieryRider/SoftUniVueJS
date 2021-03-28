@@ -19,14 +19,9 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 header {
   background-color: #032541;
-}
-.o-content-wrapper {
-  background-color: #032541;
-  width: 1250px;
-  margin: 0 auto;
 }
 header .o-content-wrapper {
   display: flex;

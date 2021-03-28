@@ -1,9 +1,9 @@
 <template>
   <header>
     <div class="o-content-wrapper">
-      <a href="/" class="logo">
+      <router-link to="/" class="logo">
           <img src="@/assets/logo.svg" alt="" />
-        </a>
+        </router-link>
       <Navigation />
     </div>
   </header>

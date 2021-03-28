@@ -2,24 +2,24 @@
   <nav>
     <ul class="main-navigation">
       <li
-        v-for="link in subpageLinks"
-        :key="link.name"
+        v-for="(link, idx) in subpageLinks"
+        :key="idx"
         class="nav__button"
       >
-        <a :href="link.to">
+        <router-link :to="link.to">
           {{ link.name }}
-        </a>
+        </router-link>
       </li>
     </ul>
     <ul class="login-register">
       <li
-        v-for="link in userManagementLinks"
-        :key="link.name"
+        v-for="(link, idx) in userManagementLinks"
+        :key="idx"
         class="nav__button"
       >
-        <a :href="link.to">
+        <router-link :to="link.to">
           {{ link.name }}
-        </a>
+        </router-link>
       </li>
     </ul>
   </nav>
@@ -31,29 +31,29 @@ export default {
     subpageLinks: [
       {
         'name': "Movies",
-        'to': "/"
+        'to': "/movies"
       },
       {
         'name': "TV Shows",
-        'to': "/"
+        'to': "/tv-shows"
       },
       {
         'name': "People",
-        'to': "/"
+        'to': "/people"
       },
       {
         'name': "More",
-        'to': "/"
+        'to': "/more"
       }
     ],
     userManagementLinks: [
       {
         'name': "Login",
-        'to': "/"
+        'to': "/login"
       },
       {
         'name': "Register",
-        'to': "/"
+        'to': "/register"
       }
     ]
   })

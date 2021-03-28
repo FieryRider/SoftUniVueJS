@@ -24,4 +24,10 @@ export default {
   width: 1250px;
   margin: 0 auto;
 }
+.bg-danger {
+  background-color: #ff0000;
+}
+.error {
+  color: #ff0000;
+}
 </style>

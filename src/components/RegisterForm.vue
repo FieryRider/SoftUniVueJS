@@ -1,21 +1,57 @@
 <template>
   <form action="/register" @submit.prevent="handleRegister">
     <label for="input-username">Username</label>
-    <input type="text" id="input-username" name="username" v-model.lazy.trim="formData.username">
-    <label for="input-password">Password (4 characters minimum)</label>
-    <input type="password" id="input-password" name="password" v-model="formData.password">
+    <input type="text" id="input-username" name="username" 
+      v-model.lazy.trim="$v.formData.username.$model"
+      :class="{ 'bg-danger': $v.formData.username.$error }">
+      <div class="error" 
+        v-if="$v.formData.username.$error">
+        <p v-if="!$v.formData.username.required">Username cannot be empty</p>
+        <p v-if="!$v.formData.username.minLength">Username must be at least {{ $v.formData.username.$params.minLength.min }} characters long</p>
+        <p v-if="!$v.formData.username.alphaNum">Username must contain only letters and numbers</p>
+      </div>
+
+    <label for="input-password">Password (8 characters minimum)</label>
+    <input type="password" id="input-password" name="password" 
+      v-model="$v.formData.password.$model"
+      :class="{ 'bg-danger': $v.formData.password.$error }">
+      <div class="error" 
+        v-if="$v.formData.password.$error">
+        <p v-if="!$v.formData.password.required">Password cannot be empty</p>
+        <p v-if="!$v.formData.password.minLength">Password must be at least {{ $v.formData.password.$params.minLength.min }} characters long</p>
+      </div>
+
     <label for="input-password-confirm">Password Confirm</label>
-    <input type="password" id="input-password-confirm" name="passwordConfirm" v-model="formData.passwordConfirm">
+    <input type="password" id="input-password-confirm" name="passwordConfirm" 
+      v-model="$v.formData.passwordConfirm.$model"
+      :class="{ 'bg-danger': $v.formData.passwordConfirm.$error }">
+      <div class="error" 
+        v-if="$v.formData.passwordConfirm.$error">
+        <p v-if="!$v.formData.passwordConfirm.required">Password Confirm cannot be empty</p>
+        <p v-if="!$v.formData.passwordConfirm.sameAsPassword">Password and Password Confirm differ</p>
+      </div>
+
     <label for="input-email">Email</label>
-    <input type="email" id="input-email" name="email" v-model.lazy.trim="formData.email">
+    <input type="email" id="input-email" name="email" 
+      v-model.lazy.trim="$v.formData.email.$model"
+      :class="{ 'bg-danger': $v.formData.email.$error }">
+      <div class="error" 
+        v-if="$v.formData.email.$error">
+        <p v-if="!$v.formData.email.required">Email cannot be empty</p>
+        <p v-if="!$v.formData.email.email">Email has to be a valid email</p>
+      </div>
+
     <input type="submit" value="Register">
-    <input type="button" value="Cancel" @click="handleClear">
-    <Spinner class="spinner" v-if="isLoading"/>
+    <input type="button" value="Cancel" 
+      @click="handleClear">
+      <Spinner class="spinner" 
+        v-if="isLoading"/>
   </form> 
 </template>
 
 <script>
 import Spinner from "@/components/Spinner.vue"
+import { required, minLength, email, alphaNum, sameAs } from "vuelidate/lib/validators"
 export default {
   components: {
     Spinner
@@ -31,8 +67,32 @@ export default {
       }
     }
   },
+  validations: {
+    formData: {
+      username: { 
+        required,
+        alphaNum,
+        minLength: minLength(6)
+      },
+      password: { 
+        required,
+        minLength: minLength(8)
+      },
+      passwordConfirm: { 
+        required,
+        sameAsPassword: sameAs("password")
+      },
+      email: { 
+        required,
+        email
+      }
+    }
+  },
   methods: {
     handleRegister: function() {
+      this.$v.$touch()
+      const { formData } =  this.$v
+      console.log(formData)
       this.isLoading = true
       fetch("/register", {
         method: "POST",

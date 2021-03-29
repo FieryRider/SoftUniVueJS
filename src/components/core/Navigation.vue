@@ -11,7 +11,8 @@
         </router-link>
       </li>
     </ul>
-    <ul class="login-register">
+    <ul class="login-register"
+        v-if="!isUserLogged">
       <li
         v-for="(link, idx) in userManagementLinks"
         :key="idx"
@@ -19,6 +20,14 @@
       >
         <router-link :to="link.to">
           {{ link.name }}
+        </router-link>
+      </li>
+    </ul>
+    <ul class="logout"
+      v-else>
+      <li class="nav__button">
+        <router-link to="/logout">
+          Logout
         </router-link>
       </li>
     </ul>
@@ -56,7 +65,15 @@ export default {
         'to': "/register"
       }
     ]
-  })
+  }),
+  computed: {
+    isUserLogged: function() {
+      if (this.$store.getters.getUserToken == undefined)
+        return false
+
+      return true
+    }
+  }
 }
 </script>
 

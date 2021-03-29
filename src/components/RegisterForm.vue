@@ -1,5 +1,11 @@
 <template>
   <form action="/register" @submit.prevent="handleRegister">
+    <div class="error"
+      v-if="restError"
+      @click="restError = ''"
+    >
+      {{ restError }}
+    </div>
     <label for="input-username">Username</label>
     <input type="text" id="input-username" name="username" 
       v-model.lazy.trim="$v.formData.username.$model"
@@ -44,8 +50,8 @@
     <input type="submit" value="Register">
     <input type="button" value="Cancel" 
       @click="handleClear">
-      <Spinner class="spinner" 
-        v-if="isLoading"/>
+    <Spinner class="spinner" 
+      v-if="isLoading"/>
   </form> 
 </template>
 
@@ -59,6 +65,7 @@ export default {
   data: () => {
     return {
       isLoading: false,
+      restError: "",
       formData: {
         username: "",
         password: "",
@@ -92,20 +99,24 @@ export default {
     handleRegister: function() {
       this.$v.$touch()
       const { formData } =  this.$v
-      console.log(formData)
       this.isLoading = true
-      fetch("/register", {
+      fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/users/register", {
         method: "POST",
-        body: JSON.stringify(this.formData)
+        body: JSON.stringify({
+          'username': formData.username.$model,
+          'password': formData.password.$model,
+          'email': formData.email.$model
+        })
       }).then(resp => {
+        this.isLoading = false
         if (!resp.ok)
-          console.error(resp.status)
+          this.restError = `Server returned ${resp.status}: ${resp.statusText}`
         else
-          console.log(resp)
+          this.$router.push("login")
       }).catch(err => {
-        console.error(err)
+        this.isLoading = false
+        this.restError = err
       })
-      this.isLoading = false
     },
     handleClear: function() {
       Object.keys(this.formData).forEach(k => {

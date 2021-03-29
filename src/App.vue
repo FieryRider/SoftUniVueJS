@@ -28,6 +28,14 @@ export default {
   background-color: #ff0000;
 }
 .error {
-  color: #ff0000;
+  padding: 10px 10px;
+  background-color: #ff0000;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+}
+.error p {
+  padding: 0;
+  margin: 0;
 }
 </style>

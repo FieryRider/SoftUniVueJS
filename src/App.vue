@@ -19,6 +19,7 @@ export default {
 @import './assets/styles/normalize.css';
 * {
   font-family: 'Source Sans Pro', Arial, sans-serif;
+  box-sizing: border-box;
 }
 .o-content-wrapper {
   width: 1250px;

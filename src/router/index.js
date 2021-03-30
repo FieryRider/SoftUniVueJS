@@ -5,6 +5,7 @@ import Home from "@/views/Home.vue"
 import Login from "@/views/Login.vue"
 import Register from "@/views/Register.vue"
 import PopularMovies from "@/views/PopularMovies.vue"
+import PopularPeople from "@/views/PopularPeople.vue"
 
 import store from '../store'
 
@@ -23,7 +24,8 @@ const routes = [
         next("/")
     }
   },
-  { path: "/movies", component: PopularMovies }
+  { path: "/movies", component: PopularMovies },
+  { path: "/people", component: PopularPeople }
 ]
 
 const router = new VueRouter({

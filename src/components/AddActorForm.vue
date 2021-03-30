@@ -107,11 +107,9 @@ const locationValidator = (value) => {
 }
 
 const nameValidator = (value) => {
-  console.log(value)
   if (value.trim().length === 0)
     return true  // Caught by `required` validator
   const nameRegex = /^[a-zA-Z\s-]+$/g
-  console.log(value.match(nameRegex))
   return value.match(nameRegex) != null
 }
 

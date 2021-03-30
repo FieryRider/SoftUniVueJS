@@ -4,6 +4,7 @@ import VueRouter from "vue-router"
 import Home from "@/views/Home.vue"
 import Login from "@/views/Login.vue"
 import Register from "@/views/Register.vue"
+import PopularMovies from "@/views/PopularMovies.vue"
 
 import store from '../store'
 
@@ -21,7 +22,8 @@ const routes = [
       if (from != "/")
         next("/")
     }
-  }
+  },
+  { path: "/movies", component: PopularMovies }
 ]
 
 const router = new VueRouter({

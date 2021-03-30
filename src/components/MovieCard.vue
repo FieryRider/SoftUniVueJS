@@ -61,7 +61,7 @@ export default {
   },
   computed: {
     isUserLogged: function() {
-      if (this.$store.getters.getUserToken == undefined)
+      if (this.$store.getters.getUserToken == null)
         return false
 
       return true

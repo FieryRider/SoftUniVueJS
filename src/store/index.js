@@ -3,10 +3,14 @@ import Vuex from "vuex"
 
 Vue.use(Vuex)
 
+const initialState = () => ({
+  'user-token': localStorage.getItem("user-token"),
+  'isAdmin': localStorage.getItem("isAdmin") ? localStorage.getItem("isAdmin") : false
+})
+
 export default new Vuex.Store({
   state: {
-    'user-token': null,
-    'isAdmin': false
+    ...initialState()
   },
   getters: {
     getUserToken(state) {
@@ -19,9 +23,20 @@ export default new Vuex.Store({
   mutations: {
     setUserToken(state, payload) {
       state["user-token"] = payload
+      localStorage.setItem("user-token", payload)
     },
     setIsAdmin(state, payload) {
       state.isAdmin = payload
+      localStorage.setItem("isAdmin", payload)
+    },
+    resetState(state) {
+      Object.assign(state, initialState())
+    },
+    deauthenticate(state) {
+      state.isAdmin = false
+      state['user-token'] = null
+      localStorage.removeItem("user-token")
+      localStorage.removeItem("isAdmin")
     }
   }
 })

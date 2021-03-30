@@ -20,15 +20,14 @@ const routes = [
     path: "/logout",
     component: Register,
     beforeEnter: function(to, from, next) {
-      store.commit("setUserToken", undefined)
-      store.commit("setIsAdmin", false)
+      store.commit("deauthenticate")
       if (from != "/")
         next("/")
     }
   },
   { path: "/movies", component: PopularMovies },
   { path: "/people", component: PopularPeople },
-  { 
+  {
     path: "/actor/add",
     component: AddActor,
     beforeEnter: function(to, from, next) {

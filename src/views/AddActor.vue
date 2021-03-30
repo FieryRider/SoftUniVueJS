@@ -11,7 +11,7 @@ import AddActorForm from "@/components/AddActorForm.vue";
 export default {
   components: {
     AddActorForm
-  },
+  }
 };
 </script>
 

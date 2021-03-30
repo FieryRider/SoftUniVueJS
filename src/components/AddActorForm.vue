@@ -1,5 +1,5 @@
 <template>
-  <form action="/actor/add" @submit.prevent="handleRegister">
+  <form action="/actor/add" @submit.prevent="handleAddActor">
     <div class="error"
       v-if="restError"
       @click="restError = ''"
@@ -20,7 +20,7 @@
       <div class="error" 
         v-if="$v.formData.name.$error">
         <p v-if="!$v.formData.name.required">Name cannot be empty</p>
-        <p v-if="!$v.formData.name.alphaNum">Name must contain only letters and numbers</p>
+        <p v-if="!$v.formData.name.nameValidator">Name must contain only letters and numbers</p>
       </div>
     </section>
 
@@ -50,7 +50,7 @@
         <p v-if="!$v.formData.age.required">Age cannot be empty</p>
         <p v-if="!$v.formData.age.numeric">Age must be a number</p>
       </div>
-      </section>
+    </section>
 
     <section class="form-field">
       <label for="input-birthday">Birthday</label>
@@ -61,7 +61,7 @@
         v-if="$v.formData.birthday.$error">
         <p v-if="!$v.formData.birthday.required">Birthday cannot be empty</p>
       </div>
-      </section>
+    </section>
 
     <section class="form-field">
       <label for="input-place-of-birth">Place of Birth</label>
@@ -73,7 +73,7 @@
         <p v-if="!$v.formData.placeOfBirth.required">Place of Birth cannot be empty</p>
         <p v-if="!$v.formData.placeOfBirth.locationValidator">Place of Birth must contain only letters, numbers, commas, and hiphens</p>
       </div>
-      </section>
+    </section>
 
     <section class="form-field">
       <label for="input-profile-picture-url">Profile picture URL</label>
@@ -90,8 +90,8 @@
     <input type="submit" value="Add Actor">
     <input type="button" value="Cancel" 
       @click="handleClear">
-      <Spinner class="spinner" 
-        v-if="isLoading"/>
+    <Spinner class="spinner" 
+      v-if="isLoading"/>
   </form> 
 </template>
 
@@ -100,13 +100,19 @@ import Spinner from "@/components/Spinner.vue"
 import { required, numeric, url } from "vuelidate/lib/validators"
 
 const locationValidator = (value) => {
-  const locationRegex = /[a-zA-Z0-9,\s-]+/g
-  return value.match(locationRegex)
+  if (value.trim().length === 0)
+    return true  // Caught by `required` validator
+  const locationRegex = /^[a-zA-Z0-9,\s-]+$/g
+  return value.match(locationRegex) != null
 }
 
 const nameValidator = (value) => {
-  const nameRegex = /[a-zA-Z\s-]+/g
-  return value.match(nameRegex)
+  console.log(value)
+  if (value.trim().length === 0)
+    return true  // Caught by `required` validator
+  const nameRegex = /^[a-zA-Z\s-]+$/g
+  console.log(value.match(nameRegex))
+  return value.match(nameRegex) != null
 }
 
 export default {
@@ -123,8 +129,8 @@ export default {
         gender: "",
         age: "",
         birthday: "",
-        profilePictureUrl: "",
         placeOfBirth: "",
+        profilePictureUrl: ""
       }
     }
   },
@@ -134,14 +140,14 @@ export default {
         required,
         nameValidator
       },
-      gender: { 
-        required,
-      },
       age: { 
         required,
         numeric
       },
-      birthday: { 
+      gender: {
+        required
+      },
+      birthday: {
         required
       },
       profilePictureUrl: {
@@ -149,17 +155,21 @@ export default {
         url
       },
       placeOfBirth: {
-        required,
-        locationValidator
+       required,
+       locationValidator
       }
     }
   },
   methods: {
-    handleRegister: function() {
+    handleAddActor: function() {
+      this.isLoading = true
       this.$v.$touch()
       const { formData } =  this.$v
-      this.isLoading = true
-      console.log(formData.profilePictureUrl.$model)
+      if (formData.$anyError || !formData.$dirty) {
+        this.isLoading = false
+        return
+      }
+
       fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/actors", {
         method: "POST",
         headers: {
@@ -167,13 +177,6 @@ export default {
           'user-token': this.$store.getters.getUserToken
         },
         body: JSON.stringify({
-          /*
-        "name": "Connie Nielsen",
-	"gender": "female",
-	"birthday": "1965-07-03T21:00:00.000Z",
-	"age": 55,
-	"place_of_birth": "Elling, Frederikshavn, Denmark"
-           */
           'name': formData.name.$model,
           'gender': formData.gender.$model,
           'birthday': formData.birthday.$model,

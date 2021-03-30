@@ -2,7 +2,7 @@
   <nav>
     <ul class="main-navigation">
       <li
-        v-for="(link, idx) in subpageLinks"
+        v-for="(link, idx) in filteredSubpageLinks"
         :key="idx"
         class="nav__button"
       >
@@ -40,19 +40,23 @@ export default {
     subpageLinks: [
       {
         'name': "Movies",
-        'to': "/movies"
-      },
-      {
-        'name': "TV Shows",
-        'to': "/tv-shows"
+        'to': "/movies",
+        'protected': false
       },
       {
         'name': "People",
-        'to': "/people"
+        'to': "/people",
+        'protected': false
       },
       {
-        'name': "More",
-        'to': "/more"
+        'name': "Add Actor",
+        'to': "/actor/add",
+        'protected': true
+      },
+      {
+        'name': "Add Movie",
+        'to': "/movies/add",
+        'protected': true
       }
     ],
     userManagementLinks: [
@@ -72,6 +76,18 @@ export default {
         return false
 
       return true
+    },
+    filteredSubpageLinks: function() {
+      return this.subpageLinks.filter((link) => {
+        if (link.protected) {
+          if (this.$store.getters.getIsAdmin)
+            return true
+          return false
+        }
+          
+        return true
+      
+      })
     }
   }
 }

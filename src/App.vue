@@ -39,4 +39,15 @@ export default {
   padding: 0;
   margin: 0;
 }
+.message {
+  padding: 10px 10px;
+  background-color: #1b3a53;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+}
+.message p {
+  padding: 0;
+  margin: 0;
+}
 </style>

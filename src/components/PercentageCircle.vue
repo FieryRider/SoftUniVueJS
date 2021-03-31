@@ -1,5 +1,5 @@
 <template>
-  <div class="single-chart" :style="{ top: top, left: left }">
+  <div class="single-chart" :style="{ width: size, top: top, left: left, position: positionAbsolute ? 'absolute': 'static' }">
     <svg viewBox="0 0 36 36" class="circular-chart">
       <path class="circle-bg"
         :style="{ fill: fillColor }"
@@ -25,22 +25,26 @@ export default {
     top: String,
     left: String,
     textColor: String,
-    fillColor: String
+    fillColor: String,
+    positionAbsolute: Boolean,
+    scale: {
+      type: Number,
+      default: 1
+    }
   },
   computed: {
     progress: function() {
       return `${this.percentage}, 100`
+    },
+    size: function() {
+      const widthPercentage = this.scale * 33
+      return `${widthPercentage}%`
     }
   }
 }
 </script>
 
 <style scoped>
-.single-chart {
-  position: absolute;
-  width: 33%;
-}
-
 .circular-chart {
   display: block;
   max-width: 80%;

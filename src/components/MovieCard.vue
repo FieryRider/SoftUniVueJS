@@ -35,7 +35,7 @@
         </h3>
       <div class="movie-card__release-date"><time>{{ releaseDateString }}</time></div>
     </section>
-    <PercentageCircle :percentage="rating" top="245px" left="10px" textColor="#fff" fillColor="#000"/>
+    <PercentageCircle :percentage="rating" top="245px" left="10px" textColor="#fff" fillColor="#000" :positionAbsolute="true" />
   </div>
 </template>
 

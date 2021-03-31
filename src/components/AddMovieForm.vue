@@ -214,7 +214,6 @@ export default {
         return
       }
 
-      console.log(formData)
       fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/movies", {
         method: "POST",
         headers: {
@@ -238,10 +237,8 @@ export default {
           this.restError = `Server returned ${resp.status}: ${resp.statusText}`
         return resp.json()
       }).then(movie => {
-        console.log("movie", movie)
         const movieId = movie.objectId
         const cast = formData.selectedActors.$model.map(actor => actor.objectId)
-        console.log("cast", cast)
         fetch(`https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/movies/${movieId}/cast`, {
           method: "POST",
           headers: {
@@ -250,7 +247,6 @@ export default {
           },
           body: JSON.stringify(cast)
         }).then(resp => {
-          console.warn("POST cast", resp.status, resp.statusText)
           if (!resp.ok)
             this.restError = `Server returned ${resp.status}: ${resp.statusText}`
           this.isLoading = false

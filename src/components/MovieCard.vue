@@ -75,10 +75,8 @@ export default {
   },
   methods: {
     addToWatchList: function() {
-      console.log('wl')
     },
     addToFavourite: function() {
-      console.log('fav')
     }
   }
 }

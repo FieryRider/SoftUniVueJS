@@ -8,6 +8,7 @@ import PopularMovies from "@/views/PopularMovies.vue"
 import PopularPeople from "@/views/PopularPeople.vue"
 import AddActor from "@/views/AddActor.vue"
 import AddMovie from "@/views/AddMovie.vue"
+import MovieDetails from "@/views/MovieDetails.vue"
 
 import store from '../store'
 
@@ -27,6 +28,7 @@ const routes = [
     }
   },
   { path: "/movies", component: PopularMovies },
+  { path: "/movie-details", component: MovieDetails },
   { path: "/people", component: PopularPeople },
   {
     path: "/actor/add",

@@ -2,7 +2,7 @@
   <div class="movie-card">
     <i class="fas fa-ellipsis-v"></i>
     <section class="movie-card__poster">
-      <router-link :to="'/movie/' + movieId">
+      <router-link :to="'/movies/' + movieId">
         <img :src="posterUrl" :alt="posterAlt" />
       </router-link>
       <div class="movie-card__options">
@@ -31,7 +31,7 @@
     </section>
     <section class="movie-card__content">
       <h3 class="movie-card__title">
-        <router-link :to="'/movie/' + movieId">{{ title }}</router-link>
+        <router-link :to="'/movies/' + movieId">{{ title }}</router-link>
         </h3>
       <div class="movie-card__release-date"><time>{{ releaseDateString }}</time></div>
     </section>

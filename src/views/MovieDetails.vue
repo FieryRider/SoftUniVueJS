@@ -30,24 +30,15 @@
           <h3>Top Billed Cast</h3>
           <div class="movie-info-card-more__cast-people">
             <div class="flex-scroll">
-              <SmallPersonCard name="Kelly Marie Tran" role="Raya (voice)" profilePictureUrl="https://www.themoviedb.org/t/p/w600_and_h900_bestv2/v2daUrk7hZryH6vtCWK9ESf6gAG.jpg" personId="asdad3qrq3we" />
-              <SmallPersonCard name="Kelly Marie Tran" role="Raya (voice)" profilePictureUrl="https://www.themoviedb.org/t/p/w600_and_h900_bestv2/v2daUrk7hZryH6vtCWK9ESf6gAG.jpg" personId="asdad3qrq3we" />
-              <SmallPersonCard name="Kelly Marie Tran" role="Raya (voice)" profilePictureUrl="https://www.themoviedb.org/t/p/w600_and_h900_bestv2/v2daUrk7hZryH6vtCWK9ESf6gAG.jpg" personId="asdad3qrq3we" />
-              <SmallPersonCard name="Kelly Marie Tran" role="Raya (voice)" profilePictureUrl="https://www.themoviedb.org/t/p/w600_and_h900_bestv2/v2daUrk7hZryH6vtCWK9ESf6gAG.jpg" personId="asdad3qrq3we" />
-              <SmallPersonCard name="Kelly Marie Tran" role="Raya (voice)" profilePictureUrl="https://www.themoviedb.org/t/p/w600_and_h900_bestv2/v2daUrk7hZryH6vtCWK9ESf6gAG.jpg" personId="asdad3qrq3we" />
-              <SmallPersonCard name="Kelly Marie Tran" role="Raya (voice)" profilePictureUrl="https://www.themoviedb.org/t/p/w600_and_h900_bestv2/v2daUrk7hZryH6vtCWK9ESf6gAG.jpg" personId="asdad3qrq3we" />
-              <SmallPersonCard name="Kelly Marie Tran" role="Raya (voice)" profilePictureUrl="https://www.themoviedb.org/t/p/w600_and_h900_bestv2/v2daUrk7hZryH6vtCWK9ESf6gAG.jpg" personId="asdad3qrq3we" />
-              <SmallPersonCard name="Kelly Marie Tran" role="Raya (voice)" profilePictureUrl="https://www.themoviedb.org/t/p/w600_and_h900_bestv2/v2daUrk7hZryH6vtCWK9ESf6gAG.jpg" personId="asdad3qrq3we" />
-              <SmallPersonCard name="Kelly Marie Tran" role="Raya (voice)" profilePictureUrl="https://www.themoviedb.org/t/p/w600_and_h900_bestv2/v2daUrk7hZryH6vtCWK9ESf6gAG.jpg" personId="asdad3qrq3we" />
-              <SmallPersonCard name="Kelly Marie Tran" role="Raya (voice)" profilePictureUrl="https://www.themoviedb.org/t/p/w600_and_h900_bestv2/v2daUrk7hZryH6vtCWK9ESf6gAG.jpg" personId="asdad3qrq3we" />
-              <SmallPersonCard name="Kelly Marie Tran" role="Raya (voice)" profilePictureUrl="https://www.themoviedb.org/t/p/w600_and_h900_bestv2/v2daUrk7hZryH6vtCWK9ESf6gAG.jpg" personId="asdad3qrq3we" />
+              <SmallPersonCard v-for="person in cast" :key="person.personId" :name="person.name" role="Raya (voice)" :profilePictureUrl="person.profilePictureUrl" :personId="person.personId" />
+              <!-- <SmallPersonCard name="Kelly Marie Tran" role="Raya (voice)" profilePictureUrl="https://www.themoviedb.org/t/p/w600_and_h900_bestv2/v2daUrk7hZryH6vtCWK9ESf6gAG.jpg" personId="asdad3qrq3we" /> -->
             </div>
           </div>
         </div>
         <section class="movie-info-cast-more__info">
           <div>
             <h5>Status</h5>
-            <span>{{ status }}</span>
+            <span>{{ statusString }}</span>
           </div>
           <div>
             <h5>Original Language</h5>
@@ -59,7 +50,7 @@
           </div>
           <div>
             <h5>Revenue</h5>
-            <span>{{ revenue }}</span>
+            <span>{{ revenueString }}</span>
           </div>
         </section>
       </div>
@@ -79,42 +70,80 @@ export default {
   },
   data: () => {
     return {
-      title: "Godzilla vs. Kong",
-      releaseDate: new Date(2021, 2, 31),
-      releaseCountry: "US",
-      genres: ["Action", "Science Fiction"],
-      runtime: moment.duration(113, "minutes"),
-      certification: "PG-13",
-      score: 70,
-      tagLine: "One Will Fall",
-      overview: "In a time when monsters walk the Earth, humanity’s fight for its future sets Godzilla and Kong on a collision course that will see the two most powerful forces of nature on the planet collide in a spectacular battle for the ages.",
-      status: "released",
-      originalLanguage: "English",
-      budget: 200000000,
-      revenue: 12180000.0,
-      posterUrl: "https://www.themoviedb.org/t/p/w600_and_h900_bestv2/pgqgaUx1cJb5oZQQ5v0tNARCeBp.jpg"
+      title: "",
+      releaseDate: null,
+      releaseCountry: "",
+      genres: [],
+      runtime: null,
+      certification: "",
+      score: 0,
+      tagLine: "",
+      overview: "",
+      status: "",
+      originalLanguage: "",
+      budget: 0,
+      revenue: 0,
+      posterUrl: "",
+      cast: []
     }
   },
   computed: {
     releaseDateString: function() {
+      if (this.releaseDate === null)
+        return ""
       return `${this.releaseDate.getMonth() + 1}/${this.releaseDate.getDate()}/${this.releaseDate.getFullYear()} (${this.releaseCountry})`
     },
     genresString: function() {
-      return this.genres.join(", ")
+      const formattedGenres = this.genres.map(genre => {
+        let words = genre.split("_")
+        words = words.map(word => word[0].toUpperCase() + word.substring(1))
+        return words.join(" ")
+      })
+      return formattedGenres.join(", ")
     },
     runtimeFormatted: function() {
-      return "asd"
-      //return this.runtime.format("h[h] mm[m]")
+      if (this.runtime === null)
+        return ""
+      return `${this.runtime.hours()}h ${this.runtime.minutes()}m`
+    },
+    statusString: function() {
+      return this.status.split("_").map(word => word[0].toUpperCase() + word.substring(1)).join(" ")
+    },
+    revenueString: function() {
+      return this.revenue ? this.revenue : "-"
     }
+  },
+  created: function() {
+    fetch(`https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/movies/${this.$route.params.movieId}?loadRelations=genres,cast`)
+      .then(resp => resp.json())
+      .then(data => {
+        this.title = data.title
+        this.releaseDate = new Date(data.release_date)
+        // this.releaseCountry = data.release_country
+        this.releaseCountry = "US"
+        this.genres = data.genres.map(genreObj => genreObj.name)
+        this.runtime = moment.duration(113, "minutes")
+        // this.certification = data.certification
+        this.certification = "PG-13"
+        this.score = data.rating
+        // this.tagLine = data.tag_line
+        this.overview = data.overview
+        this.status = data.status
+        this.originalLanguage = data.official_language
+        this.budget = data.budget
+        this.revenue = data.revenue
+        this.posterUrl = data.poster_url
+        this.cast = data.cast.map(actor => { return { 'name': actor.name, 'profilePictureUrl': actor.profile_picture_url, 'personId': actor.objectId } })
+      })
   }
 }
 </script>
 
 <style scoped>
 h5 {
-  margin: 0;
+  margin-bottom: 2px;
   padding: 0;
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 600;
 }
 .container {
@@ -190,6 +219,9 @@ h5 {
 }
 .movie-info-cast-more__info div {
   margin: 15px 0;
+}
+.movie-info-cast-more__info div {
+  font-size: 0.9rem;
 }
 .flex-scroll {
   padding: 10px 5px;

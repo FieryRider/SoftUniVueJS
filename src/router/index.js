@@ -28,7 +28,7 @@ const routes = [
     }
   },
   { path: "/movies", component: PopularMovies },
-  { path: "/movie-details", component: MovieDetails },
+  { path: "/movies/:movieId", component: MovieDetails },
   { path: "/people", component: PopularPeople },
   {
     path: "/actor/add",

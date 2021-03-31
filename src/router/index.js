@@ -14,11 +14,19 @@ import store from '../store'
 
 Vue.use(VueRouter)
 
-const routes = [
-  { path: "/", component: Home },
-  { path: "/login", component: Login },
-  { path: "/register", component: Register },
-  { 
+const routes = [{
+    path: "/",
+    component: Home
+  },
+  {
+    path: "/login",
+    component: Login
+  },
+  {
+    path: "/register",
+    component: Register
+  },
+  {
     path: "/logout",
     component: Register,
     beforeEnter: function(to, from, next) {
@@ -27,12 +35,13 @@ const routes = [
         next("/")
     }
   },
-  { path: "/movies", component: PopularMovies },
-  { path: "/movies/:movieId", component: MovieDetails },
-  { path: "/people", component: PopularPeople },
   {
-    path: "/actor/add",
-    component: AddActor,
+    path: "/movies",
+    component: PopularMovies
+  },
+  {
+    path: "/movies/add",
+    component: AddMovie,
     beforeEnter: function(to, from, next) {
       const userToken = store.getters.getUserToken
       const isAdmin = store.getters.getIsAdmin
@@ -43,8 +52,16 @@ const routes = [
     }
   },
   {
-    path: "/movies/add",
-    component: AddMovie,
+    path: "/movies/:movieId",
+    component: MovieDetails
+  },
+  {
+    path: "/people",
+    component: PopularPeople
+  },
+  {
+    path: "/actor/add",
+    component: AddActor,
     beforeEnter: function(to, from, next) {
       const userToken = store.getters.getUserToken
       const isAdmin = store.getters.getIsAdmin
@@ -65,9 +82,10 @@ router.beforeEach((to, from, next) => {
   /* Deauthenticate user after 120 min */
   const loginTime = store.getters.getLoginTime
   const currentTime = Date.now()
-  const expirationDate = (loginTime + 120 * 60) / 10000
-  if (currentTime >= expirationDate)
+  const expirationDate = loginTime + (60 * 60 * 1000)
+  if (currentTime >= expirationDate) {
     store.commit("deauthenticate")
+  }
 
   next()
 })

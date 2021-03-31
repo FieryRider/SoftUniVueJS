@@ -51,6 +51,19 @@ const routes = [
       else
         next("/")
     }
+  },
+  {
+    path: "*",
+    beforeEnter: function(to, from, next) {
+      /* Deauthenticate user after 120 min */
+      const loginTime = store.getters.getLoginTime
+      const currentTime = Date.now()
+      const expirationDate = loginTime + 120*60000
+      if (currentTime >= expirationDate)
+        store.commit("deauthenticate")
+
+      next()
+    }
   }
 ]
 

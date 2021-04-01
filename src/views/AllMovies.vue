@@ -26,7 +26,6 @@ export default {
   },
   created: function() {
     let favouriteMoviesIds = undefined
-    let popularMoviesIds = undefined
     let favouriteMoviesRequest = Promise.resolve()
     if (this.isUserLogged) {
       favouriteMoviesRequest = fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/favourite_movies?relationsDepth=1", {
@@ -45,19 +44,15 @@ export default {
       })
       .then(data => {
         favouriteMoviesIds = null
+        console.log(data)
         if (data != undefined && !("errorData" in data))
           favouriteMoviesIds = data.map(favMovie => favMovie.movie.objectId)
 
-        return fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/popular_movies?relationsDepth=1")
-      })
-      .then(resp => resp.json())
-      .then(data => {
-        popularMoviesIds = data.map(popularMovie => popularMovie.movie.objectId)
         return fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/movies")
       })
       .then(resp => resp.json())
       .then(data => {
-        data.filter(dbMovie => popularMoviesIds.includes(dbMovie.objectId)).forEach(dbMovie => {
+        data.forEach(dbMovie => {
           const movie = {
             'title': dbMovie.title,
             'releaseDate': new Date(dbMovie['release_date']),
@@ -71,6 +66,7 @@ export default {
             'movieId': dbMovie.objectId,
             'favourite': favouriteMoviesIds == null ? false : favouriteMoviesIds.includes(dbMovie.objectId)
           }
+
           this.movies.push(movie)
         })
       })

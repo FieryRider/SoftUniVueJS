@@ -49,15 +49,20 @@ export default {
         'protected': false
       },
       {
-        'name': "People",
-        'to': "/people",
-        'protected': false
+        'name': "Popular Movies",
+        'to': "/movies/popular",
+        'protected': false,
       },
       {
         'name': "Favourite Movies",
         'to': "/movies/favourite",
         'protected': true,
         'protectionLevel': protectionLevels.USER
+      },
+      {
+        'name': "People",
+        'to': "/people",
+        'protected': false
       },
       {
         'name': "Add Actor",

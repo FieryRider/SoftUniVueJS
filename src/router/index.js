@@ -4,12 +4,13 @@ import VueRouter from "vue-router"
 import Home from "@/views/Home.vue"
 import Login from "@/views/Login.vue"
 import Register from "@/views/Register.vue"
-import PopularMovies from "@/views/PopularMovies.vue"
+import AllMovies from "@/views/AllMovies.vue"
 import PopularPeople from "@/views/PopularPeople.vue"
 import AddActor from "@/views/AddActor.vue"
 import AddMovie from "@/views/AddMovie.vue"
 import MovieDetails from "@/views/MovieDetails.vue"
 import FavouriteMovies from "@/views/FavouriteMovies.vue"
+import PopularMovies from "@/views/PopularMovies.vue"
 
 import store from '../store'
 
@@ -38,7 +39,7 @@ const routes = [{
   },
   {
     path: "/movies",
-    component: PopularMovies
+    component: AllMovies
   },
   {
     path: "/movies/add",
@@ -62,6 +63,10 @@ const routes = [{
       else
         next("/")
     }
+  },
+  {
+    path: "/movies/popular",
+    component: PopularMovies
   },
   {
     path: "/movies/:movieId",

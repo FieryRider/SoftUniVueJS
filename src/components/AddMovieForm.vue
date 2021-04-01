@@ -140,7 +140,7 @@ import { required, alpha, numeric, url } from "vuelidate/lib/validators"
 const titleValidator = (value) => {
   if (value.trim().length === 0)
     return true  // Caught by `required` validator
-  const nameRegex = /^[a-zA-Z0-9!#$%()\s-]+$/g
+  const nameRegex = /^[a-zA-Z0-9'!#$%()\s-]+$/g
   return value.match(nameRegex) != null
 }
 

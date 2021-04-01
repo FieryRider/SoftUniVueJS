@@ -108,7 +108,7 @@
     </section>
 
     <section class="form-field">
-      <label for="input-actors">Actors</label>
+      <label class="select-label" for="input-actors">Actors:</label>
       <select name="actors" id="input-actors" multiple v-model="formData.selectedActors">
         <option v-for="actor in actors" :value="actor" :key="actor.actorId">
           {{ actor.name }}
@@ -325,6 +325,23 @@ input[type='button'] {
 input[type='button']:hover {
   cursor: pointer;
   background-color: rgba(0, 0, 0, 0.05);
+}
+select {
+  min-width: 200px;
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  background-color: #fff;
+  scrollbar-width: thin;
+}
+select option {
+  padding: 5px;
+  border-radius: 3px;
+}
+
+.select-label {
+  margin-right: 10px;
+  vertical-align: top;
 }
 .radio-label {
   margin-left: 4px;

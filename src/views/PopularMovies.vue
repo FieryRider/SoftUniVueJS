@@ -1,6 +1,6 @@
 <template>
   <main class="movie-grid">
-    <MovieCard v-for="movie in movies" :key="movie.movieId" color="white" :title="movie.title" :releaseDate="movie.releaseDate" :rating="movie.rating" :posterUrl="movie.posterUrl" :favourite="movie.favourite" :movieId="movie.movieId" />
+    <MovieCard v-for="movie in movies" :key="movie.movieId" color="white" :title="movie.title" :releaseDate="movie.releaseDate" :rating="movie.rating" :posterUrl="movie.posterUrl" :favourite="movie.favourite" :popular="movie.popular" :movieId="movie.movieId" />
   </main>
 </template>
 
@@ -69,7 +69,8 @@ export default {
             'revenue': dbMovie.revenue,
             'status': dbMovie.status,
             'movieId': dbMovie.objectId,
-            'favourite': favouriteMoviesIds == null ? false : favouriteMoviesIds.includes(dbMovie.objectId)
+            'favourite': favouriteMoviesIds == null ? false : favouriteMoviesIds.includes(dbMovie.objectId),
+            'popular': popularMoviesIds == null ? false : popularMoviesIds.includes(dbMovie.objectId)
           }
           this.movies.push(movie)
         })

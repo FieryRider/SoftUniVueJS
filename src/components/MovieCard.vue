@@ -17,6 +17,10 @@
             <a v-if="isFavourite" @click="removeFromFavourites">Remove Favourite</a>
             <a v-else @click="addToFavourites">Favourite</a>
           </section>
+          <section v-if="isUserLogged && isUserAdmin">
+            <a v-if="isPopular" @click="removeFromPopular">Remove from Popular</a>
+            <a v-else @click="addToPopular">Add to Popular</a>
+          </section>
         </section>
         <section class="movie-card__options-content movie-card__options-content--guest" v-else v-show="showMenu">
             <section>
@@ -60,7 +64,11 @@ export default {
     rating: Number,
     posterUrl: String,
     movieId: String,
-    favourite: Boolean
+    favourite: Boolean,
+    popular: {
+      type: Boolean,
+      default: false
+    }
   },
   computed: {
     isUserLogged: function() {
@@ -68,6 +76,9 @@ export default {
         return false
 
       return true
+    },
+    isUserAdmin: function() {
+      return this.$store.getters.getIsAdmin
     },
     releaseDateString: function() {
       return this.releaseDate.toLocaleString("en-US", { year: 'numeric', month: 'short', day: 'numeric', timeZone: "UTC" })
@@ -81,6 +92,14 @@ export default {
       },
       set: function(value) {
         this.favourite = value
+      }
+    },
+    isPopular:  {
+      get: function() {
+        return this.popular
+      },
+      set: function(value) {
+        this.popular = value
       }
     }
   },
@@ -120,13 +139,10 @@ export default {
 
             return resp.json()
           }).then(() => {
-            console.log("Successful")
             this.isFavourite = true
           }).catch(err => {
             if ("respData" in err)
               return err.respData.json()
-
-            console.error(err)
           }).then(data => {
             if (data !== undefined)
               console.warn("DbError", data)
@@ -172,6 +188,90 @@ export default {
         .then(resp => resp.json())
         .then(() => {
           this.isFavourite = false
+        })
+        .catch(e => console.error(e))
+
+    },
+    addToPopular: function() {
+      fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/popular_movies", {
+        method: "POST",
+        headers: {
+          'Content-Type': "application/json",
+          'user-token': this.$store.getters.getUserToken
+        },
+        body: JSON.stringify({})
+      }).then(resp => resp.json())
+        .then(data => {
+          const popularMovieEntryId = data.objectId
+          if (popularMovieEntryId == undefined)
+            return
+
+          fetch(`https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/popular_movies/${popularMovieEntryId}/movie`, {
+            method: "POST",
+            headers: {
+              'Content-Type': "application/json",
+              'user-token': this.$store.getters.getUserToken
+            },
+            body: JSON.stringify([this.movieId])
+          }).then(resp => {
+            if (!resp.ok && resp.status >= 500)
+              throw new Error({ 'status': resp.status, 'statusText': resp.statusText })
+            else if (!resp.ok && resp.status < 500)
+              return Promise.reject({ respData: resp })
+
+            return resp.json()
+          }).then(() => {
+            this.isPopular = true
+          }).catch(err => {
+            if ("respData" in err)
+              return err.respData.json()
+
+            console.error(err)
+          }).then(data => {
+            if (data !== undefined)
+              console.warn("DbError", data)
+          })
+        })
+    },
+    removeFromPopular: function() {
+      let popularMovieId
+      fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/popular_movies?loadRelations=movie", {
+        headers: {
+          'Conten-Type': "application/json",
+          'user-token': this.$store.getters.getUserToken
+        }
+      }).then(resp => resp.json())
+        .then(data => {
+          data.forEach(popularMovie => {
+            if (popularMovie.movie.objectId == this.movieId)
+              popularMovieId = popularMovie.objectId
+          })
+
+          if (popularMovieId != undefined) {
+            return fetch(`https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/popular_movies/${popularMovieId}/movie`, {
+              method: "DELETE",
+              headers: {
+                'Content-Type': "application/json",
+                'user-token': this.$store.getters.getUserToken
+              }
+            })
+          } else {
+            throw new Error("popularMovieId isundefined")
+          }
+        })
+        .then(resp => resp.json())
+        .then(() => {
+          return fetch(`https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/popular_movies/${popularMovieId}`, {
+            method: "DELETE",
+            headers: {
+              'Content-Type': "application/json",
+              'user-token': this.$store.getters.getUserToken
+            }
+          })
+        })
+        .then(resp => resp.json())
+        .then(() => {
+          this.isPopular = false
         })
         .catch(e => console.error(e))
 

@@ -104,8 +104,6 @@ export default {
             movieId: movie.objectId
           }
         })
-        for (let i = 0; i < 20; i++)
-          this.knownForList.push(this.knownForList[0])
       })
   }
 }

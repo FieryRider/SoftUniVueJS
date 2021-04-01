@@ -116,6 +116,15 @@
       </select>
     </section>
 
+    <section class="form-field">
+      <label class="select-label" for="input-genres">Genres:</label>
+      <select name="genres" id="input-genres" multiple v-model="formData.selectedGenres">
+        <option v-for="genre in genres" :value="genre" :key="genre.genreId">
+          {{ genre.name }}
+        </option>
+      </select>
+    </section>
+
     <input type="submit" value="Add Movie">
     <input type="button" value="Cancel" 
       @click="handleClear">
@@ -140,10 +149,13 @@ export default {
     Spinner
   },
   created: function() {
-    fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/actors")
-      .then(resp => resp.json())
-      .then(actors => {
+    const actorsRequst = fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/actors")
+    const genresRequest = fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/genres")
+    Promise.all([actorsRequst, genresRequest])
+      .then(resp => Promise.all(resp.map(r => r.json())))
+      .then(([actors, genres]) => {
         this.actors = actors
+        this.genres = genres
       })
       
   },
@@ -152,6 +164,7 @@ export default {
       isLoading: false,
       restError: "",
       infoMessage: "",
+      genres: [],
       actors: [],
       formData: {
         title: "",
@@ -163,6 +176,7 @@ export default {
         rating: 0,
         posterUrl: "",
         officialLanguage: "",
+        selectedGenres: [],
         selectedActors: []
       }
     }
@@ -201,6 +215,8 @@ export default {
         alpha
       },
       selectedActors: {
+      },
+      selectedGenres: {
       }
     }
   },
@@ -214,6 +230,7 @@ export default {
         return
       }
 
+      let addedMovieId
       fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/movies", {
         method: "POST",
         headers: {
@@ -226,32 +243,46 @@ export default {
           'overview': formData.overview.$model,
           'rating': parseInt(formData.rating.$model),
           'budget': parseFloat(formData.budget.$model),
-          'revenue': formData.revenue.$model,
+          'revenue': parseFloat(formData.revenue.$model),
           'release_date': formData.releaseDate.$model,
           'poster_url': formData.posterUrl.$model,
           'official_language': formData.officialLanguage.$model,
         })
       }).then(resp => {
-        console.warn("POST Movie: ", resp.status, resp.statusText)
         if (!resp.ok)
           this.restError = `Server returned ${resp.status}: ${resp.statusText}`
         return resp.json()
       }).then(movie => {
-        const movieId = movie.objectId
+        addedMovieId = movie.objectId
         const cast = formData.selectedActors.$model.map(actor => actor.objectId)
-        fetch(`https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/movies/${movieId}/cast`, {
+        return fetch(`https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/movies/${addedMovieId}/cast`, {
           method: "POST",
           headers: {
             'Content-Type': "application/json",
             'user-token': this.$store.getters.getUserToken
           },
           body: JSON.stringify(cast)
-        }).then(resp => {
-          if (!resp.ok)
-            this.restError = `Server returned ${resp.status}: ${resp.statusText}`
-          this.isLoading = false
-          this.infoMessage = "Movie added successfully"
         })
+      }).then(resp => {
+        if (!resp.ok)
+          this.restError = `Server returned ${resp.status}: ${resp.statusText}`
+
+        const genres = formData.selectedGenres.$model.map(genre => genre.objectId)
+        return fetch(`https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/movies/${addedMovieId}/genres`, {
+          method: "POST",
+          headers: {
+            'Content-Type': "application/json",
+            'user-token': this.$store.getters.getUserToken
+          },
+          body: JSON.stringify(genres)
+        }) 
+      }).then(resp => {
+        this.isLoading = false
+        if (!resp.ok) {
+          this.restError = `Server returned ${resp.status}: ${resp.statusText}`
+        } else {
+          this.infoMessage = "Movie added successfully"
+        }
       }).catch(err => {
         this.isLoading = false
         this.restError = err

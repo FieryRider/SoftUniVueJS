@@ -74,25 +74,51 @@ export default {
       }).then(data => {
         this.$store.commit("setUserToken", data['user-token'])
         this.$store.commit("setLoginTime")
-        fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/services/UserManagement/get-current-user-roles", {
+        return fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/services/UserManagement/get-current-user-roles", {
           method: "GET",
           headers: {
             'Content-Type': "application/json",
             'user-token': this.$store.getters.getUserToken
           }
-        }).then(resp => {
-          if (!resp.ok)
-            throw new Error(`Server returned ${resp.status}: ${resp.statusText}`)
+        })
+      }).then(resp => {
+        /*
+          if (!resp.ok && resp.status >= 500)
+            throw new Error({ 'status': resp.status, 'statusText': resp.statusText })
+          else if (!resp.ok && resp.status < 500)
+            return Promise.reject({ respData: resp })
 
           return resp.json()
+        }).then(() => {
+          this.isFavourite = true
+        }).catch(err => {
+          if ("respData" in err)
+            return err.respData.json()
         }).then(data => {
-          this.$store.commit("setIsAdmin", data.includes("Admin"))
-          this.$router.push("/")
+          if (data !== undefined)
+            console.warn("DbError", data)
         })
-      })
-        .catch(err => {
+         */
+        if (!resp.ok && resp.status >= 500)
+          throw new Error({ 'status': resp.status, 'statusText': resp.statusText })
+        else if (!resp.ok && resp.status < 500)
+          return Promise.reject({ respData: resp })
+
+        return resp.json()
+      }).then(data => {
+        this.$store.commit("setIsAdmin", data.includes("Admin"))
+        this.$router.push("/")
+      }).catch(err => {
+        if ("respData" in err)
+          return err.respData.json()
         this.isLoading = false
         this.restError = err
+      }).then(data => {
+        if (data !== undefined) {
+          this.isLoading = false
+          this.restError = JSON.stringify(data)
+          console.warn(JSON.stringify(data))
+        }
       })
     }
   }

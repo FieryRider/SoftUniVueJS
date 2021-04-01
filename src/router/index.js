@@ -11,6 +11,7 @@ import AddMovie from "@/views/AddMovie.vue"
 import MovieDetails from "@/views/MovieDetails.vue"
 import FavouriteMovies from "@/views/FavouriteMovies.vue"
 import PopularMovies from "@/views/PopularMovies.vue"
+import PersonDetails from "@/views/PersonDetails.vue"
 
 import store from '../store'
 
@@ -75,6 +76,10 @@ const routes = [{
   {
     path: "/people",
     component: PopularPeople
+  },
+  {
+    path: "/people/:personId",
+    component: PersonDetails
   },
   {
     path: "/actor/add",

@@ -41,6 +41,7 @@
 
 <script>
 import PercentageCircle from "@/components/PercentageCircle.vue"
+
 export default {
   components: {
     PercentageCircle
@@ -48,7 +49,7 @@ export default {
   data() {
     return {
       buttonColor: this.color,
-      showMenu: false,
+      showMenu: false
     }
   },
   props: {
@@ -73,10 +74,17 @@ export default {
       return `Poster image for ${this.title}`
     }
   },
+  mounted: function() {
+    document.addEventListener('click', this.close)
+  },
   methods: {
     addToWatchList: function() {
     },
     addToFavourite: function() {
+    },
+    close: function(e) {
+      if (!this.$el.contains(e.target))
+        this.showMenu = false
     }
   }
 }

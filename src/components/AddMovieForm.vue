@@ -119,7 +119,7 @@
     <section class="form-field">
       <label class="select-label" for="input-genres">Genres:</label>
       <select name="genres" id="input-genres" multiple v-model="formData.selectedGenres">
-        <option v-for="genre in genres" :value="genre" :key="genre.genreId">
+        <option v-for="genre in formattedGenres" :value="genre" :key="genre.genreId">
           {{ genre.name }}
         </option>
       </select>
@@ -149,8 +149,8 @@ export default {
     Spinner
   },
   created: function() {
-    const actorsRequst = fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/actors")
-    const genresRequest = fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/genres")
+    const actorsRequst = fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/actors?pageSize=100")
+    const genresRequest = fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/genres?pageSize=100")
     Promise.all([actorsRequst, genresRequest])
       .then(resp => Promise.all(resp.map(r => r.json())))
       .then(([actors, genres]) => {
@@ -218,6 +218,17 @@ export default {
       },
       selectedGenres: {
       }
+    }
+  },
+  computed: {
+    formattedGenres: function() {
+      const formattedGenres = this.genres.map(genre => {
+        let words = genre.name.split("_")
+        words = words.map(word => word[0].toUpperCase() + word.substring(1))
+        genre.name = words.join(" ")
+        return genre
+      })
+      return formattedGenres
     }
   },
   methods: {

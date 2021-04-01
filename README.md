@@ -11,7 +11,7 @@ npm run serve
 ```
 
 ## Usage
-The application has 7 pages (Login, Register, Movies, People, AddMovie, AddPeople):
+The application has 8 pages (Login, Register, Movies, People, AddMovie, AddPeople, FavouriteMovies):
 * Login, Register, Movies, People are accessable without authentication.
 * AddMovie, AddPeople require authentication with an admin account  
 There are 2 types of users: `Admins` and `Normal Users`.

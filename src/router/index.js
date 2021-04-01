@@ -102,7 +102,7 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   /* Deauthenticate user after 120 min */
-  const loginTime = store.getters.getLoginTime
+  const loginTime = parseInt(store.getters.getLoginTime)
   const currentTime = Date.now()
   const expirationDate = loginTime + (60 * 60 * 1000)
   if (currentTime >= expirationDate) {

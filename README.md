@@ -14,6 +14,7 @@ npm run serve
 The application has 8 pages (Login, Register, Movies, People, AddMovie, AddPeople, FavouriteMovies):
 * Login, Register, Movies, People are accessable without authentication.
 * AddMovie, AddPeople require authentication with an admin account  
+* FavouriteMovies is only accessible for logged in users
 There are 2 types of users: `Admins` and `Normal Users`.
 * The admin accounts are predefined and cannot be registered through the registration form.
 * Normal accounts can be registered through the registration form.

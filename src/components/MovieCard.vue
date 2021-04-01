@@ -14,7 +14,8 @@
             <a @click="addToWatchList">Watch List</a>
           </section>
           <section>
-            <a @click="addToFavourite">Favourite</a>
+            <a v-if="isFavourite" @click="removeFromFavourites">Remove Favourite</a>
+            <a v-else @click="addToFavourites">Favourite</a>
           </section>
         </section>
         <section class="movie-card__options-content movie-card__options-content--guest" v-else v-show="showMenu">
@@ -58,7 +59,8 @@ export default {
     releaseDate: Date,
     rating: Number,
     posterUrl: String,
-    movieId: String
+    movieId: String,
+    favourite: Boolean
   },
   computed: {
     isUserLogged: function() {
@@ -72,6 +74,9 @@ export default {
     },
     posterAlt: function() {
       return `Poster image for ${this.title}`
+    },
+    isFavourite: function() {
+      return this.favourite
     }
   },
   mounted: function() {
@@ -79,8 +84,53 @@ export default {
   },
   methods: {
     addToWatchList: function() {
+      console.log(this.$store.getters.getUserToken)
     },
-    addToFavourite: function() {
+    addToFavourites: function() {
+      console.log('add')
+      fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/favourite_movies", {
+        method: "POST",
+        headers: {
+          'Content-Type': "application/json",
+          'user-token': this.$store.getters.getUserToken
+        },
+        body: JSON.stringify({})
+      }).then(resp => resp.json())
+        .then(data => {
+          const favouriteMovieEntryId = data.objectId
+          if (favouriteMovieEntryId == undefined)
+            return
+
+          fetch(`https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/favourite_movies/${favouriteMovieEntryId}/movie`, {
+            method: "POST",
+            headers: {
+              'Content-Type': "application/json",
+              'user-token': this.$store.getters.getUserToken
+            },
+            body: JSON.stringify([this.movieId])
+          }).then(resp => {
+            if (!resp.ok && resp.status >= 500)
+              throw new Error({ 'status': resp.status, 'statusText': resp.statusText })
+            else if (!resp.ok && resp.status < 500)
+              return Promise.reject({ respData: resp })
+
+            return resp.json()
+          }).then(data => {
+            console.log("Successful")
+            console.log(data)
+          }).catch(err => {
+            if ("respData" in err)
+              return err.respData.json()
+
+            console.error(err)
+          }).then(data => {
+            if (data !== undefined)
+              console.warn("DbError", data)
+          })
+        })
+    },
+    removeFromFavourites: function() {
+      console.log("remove")
     },
     close: function(e) {
       if (!this.$el.contains(e.target))

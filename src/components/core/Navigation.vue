@@ -35,6 +35,11 @@
 </template>
 
 <script>
+const protectionLevels = {
+  USER: 0,
+  ADMIN: 1
+}
+
 export default {
   data: () => ({
     subpageLinks: [
@@ -49,14 +54,22 @@ export default {
         'protected': false
       },
       {
+        'name': "Favourite Movies",
+        'to': "/movies/favourite",
+        'protected': true,
+        'protectionLevel': protectionLevels.USER
+      },
+      {
         'name': "Add Actor",
         'to': "/actor/add",
-        'protected': true
+        'protected': true,
+        'protectionLevel': protectionLevels.ADMIN
       },
       {
         'name': "Add Movie",
         'to': "/movies/add",
-        'protected': true
+        'protected': true,
+        'protectionLevel': protectionLevels.ADMIN
       }
     ],
     userManagementLinks: [
@@ -80,13 +93,13 @@ export default {
     filteredSubpageLinks: function() {
       return this.subpageLinks.filter((link) => {
         if (link.protected) {
-          if (this.$store.getters.getIsAdmin)
+          const isAllowed = (link.protectionLevel == protectionLevels.ADMIN && this.isUserLogged && this.$store.getters.getIsAdmin) || (link.protectionLevel == protectionLevels.USER && this.isUserLogged)
+          if (isAllowed)
             return true
           return false
         }
           
         return true
-      
       })
     }
   }

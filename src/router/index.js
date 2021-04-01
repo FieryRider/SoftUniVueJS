@@ -9,6 +9,7 @@ import PopularPeople from "@/views/PopularPeople.vue"
 import AddActor from "@/views/AddActor.vue"
 import AddMovie from "@/views/AddMovie.vue"
 import MovieDetails from "@/views/MovieDetails.vue"
+import FavouriteMovies from "@/views/FavouriteMovies.vue"
 
 import store from '../store'
 
@@ -46,6 +47,17 @@ const routes = [{
       const userToken = store.getters.getUserToken
       const isAdmin = store.getters.getIsAdmin
       if (userToken != undefined && isAdmin)
+        next()
+      else
+        next("/")
+    }
+  },
+  {
+    path: "/movies/favourite",
+    component: FavouriteMovies,
+    beforeEnter: function(to, from, next) {
+      const userToken = store.getters.getUserToken
+      if (userToken != undefined)
         next()
       else
         next("/")

@@ -44,7 +44,8 @@ export default {
       })
       .then(data => {
         favouriteMoviesIds = null
-        if (data != undefined)
+        console.log(data)
+        if (data != undefined && !("errorData" in data))
           favouriteMoviesIds = data.map(favMovie => favMovie.movie.objectId)
 
         return fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/movies")

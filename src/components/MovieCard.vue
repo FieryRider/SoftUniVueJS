@@ -75,8 +75,13 @@ export default {
     posterAlt: function() {
       return `Poster image for ${this.title}`
     },
-    isFavourite: function() {
-      return this.favourite
+    isFavourite:  {
+      get: function() {
+        return this.favourite
+      },
+      set: function(value) {
+        this.favourite = value
+      }
     }
   },
   mounted: function() {
@@ -87,7 +92,6 @@ export default {
       console.log(this.$store.getters.getUserToken)
     },
     addToFavourites: function() {
-      console.log('add')
       fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/favourite_movies", {
         method: "POST",
         headers: {
@@ -115,9 +119,9 @@ export default {
               return Promise.reject({ respData: resp })
 
             return resp.json()
-          }).then(data => {
+          }).then(() => {
             console.log("Successful")
-            console.log(data)
+            this.isFavourite = true
           }).catch(err => {
             if ("respData" in err)
               return err.respData.json()
@@ -130,7 +134,47 @@ export default {
         })
     },
     removeFromFavourites: function() {
-      console.log("remove")
+      let favMovieId
+      fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/favourite_movies?loadRelations=movie", {
+        headers: {
+          'Conten-Type': "application/json",
+          'user-token': this.$store.getters.getUserToken
+        }
+      }).then(resp => resp.json())
+        .then(data => {
+          data.forEach(favMovie => {
+            if (favMovie.movie.objectId == this.movieId)
+              favMovieId = favMovie.objectId
+          })
+
+          if (favMovieId != undefined) {
+            return fetch(`https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/favourite_movies/${favMovieId}/movie`, {
+              method: "DELETE",
+              headers: {
+                'Content-Type': "application/json",
+                'user-token': this.$store.getters.getUserToken
+              }
+            })
+          } else {
+            throw new Error("fanMovieId isundefined")
+          }
+        })
+        .then(resp => resp.json())
+        .then(() => {
+          return fetch(`https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/favourite_movies/${favMovieId}`, {
+            method: "DELETE",
+            headers: {
+              'Content-Type': "application/json",
+              'user-token': this.$store.getters.getUserToken
+            }
+          })
+        })
+        .then(resp => resp.json())
+        .then(() => {
+          this.isFavourite = false
+        })
+        .catch(e => console.error(e))
+
     },
     close: function(e) {
       if (!this.$el.contains(e.target))

@@ -17,7 +17,6 @@ export default {
     }
   },
   created: function() {
-    console.log('fav')
     fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/favourite_movies?relationsDepth=2", {
       headers: {
         'Conten-Type': "application/json",
@@ -26,6 +25,7 @@ export default {
     })
       .then(resp => resp.json())
       .then(data => {
+        console.log(data)
         data.forEach(dbFavMovie => {
           const dbMovie = dbFavMovie.movie
           const movie = {

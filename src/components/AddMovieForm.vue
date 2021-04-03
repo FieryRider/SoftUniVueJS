@@ -117,14 +117,14 @@ export default {
             value: actor,
             text: actor.name
           }
-        })
+        }).sort((a1, a2) => a1.text.localeCompare(a2.text))
         this.genres = genres.map(genre => {
           return {
             objectId: genre.objectId,
             value: genre,
-            text: genre.name
+            text: genre.name.replace("_", " ").replace(/\w\S*/g, m => m.charAt(0).toUpperCase() + m.substring(1).toLowerCase())
           }
-        })
+        }).sort((g1, g2) => g1.text.localeCompare(g2.text))
       })
       
   },

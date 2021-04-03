@@ -109,7 +109,7 @@ router.beforeEach((to, from, next) => {
   const loginTime = parseInt(store.getters.getLoginTime)
   const currentTime = Date.now()
   const expirationDate = loginTime + (60 * 60 * 1000)
-  if (currentTime >= expirationDate) {
+  if (currentTime >= expirationDate && store.getters.getUserToken) {
     store.commit("deauthenticate")
   }
 

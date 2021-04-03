@@ -76,7 +76,7 @@ export default {
           this.isLoading = false
           this.$router.push("/")
         }).catch(err => {
-          if ("respData" in err)
+          if (typeof(err) === "object" && "respData" in err)
             return err.respData.json()
           this.isLoading = false
           this.restError = err

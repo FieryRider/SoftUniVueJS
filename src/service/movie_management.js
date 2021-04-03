@@ -1,5 +1,6 @@
+const globalGetOptions = "?pageSize=100"
 const getFavouriteMoviesRequest = (userToken) => {
-  return fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/favourite_movies?relationsDepth=2", {
+  return fetch(`https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/favourite_movies?relationsDepth=2&${globalGetOptions}`, {
       headers: {
         'Conten-Type': "application/json",
         'user-token': userToken
@@ -50,7 +51,7 @@ const getAllMoviesRequest = (userToken) => {
   let popularMoviesIds
   let favouriteMoviesRequest = Promise.resolve()
   if (userToken) {
-    favouriteMoviesRequest = fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/favourite_movies?relationsDepth=1", {
+    favouriteMoviesRequest = fetch(`https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/favourite_movies?relationsDepth=1&${globalGetOptions}`, {
       headers: {
         'Conten-Type': "application/json",
         'user-token': userToken
@@ -68,12 +69,12 @@ const getAllMoviesRequest = (userToken) => {
       if (data !== undefined && !("errorData" in data))
         favouriteMoviesIds = data.map(favMovie => favMovie.movie.objectId)
 
-      return fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/popular_movies?relationsDepth=1")
+      return fetch(`https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/popular_movies?relationsDepth=1&${globalGetOptions}`)
     })
     .then(resp => resp.json())
     .then(data => {
       popularMoviesIds = data.map(popularMovie => popularMovie.movie.objectId)
-      return fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/movies")
+      return fetch(`https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/movies?${globalGetOptions}`)
     })
     .then(resp => resp.json())
     .then(data => {
@@ -125,12 +126,12 @@ const getPopularMoviesRequest = (userToken) => {
       if (data != undefined && !("errorData" in data))
         favouriteMoviesIds = data.map(favMovie => favMovie.movie.objectId)
 
-      return fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/popular_movies?relationsDepth=1")
+      return fetch(`https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/popular_movies?relationsDepth=1&${globalGetOptions}`)
     })
     .then(resp => resp.json())
     .then(data => {
       popularMoviesIds = data.map(popularMovie => popularMovie.movie.objectId)
-      return fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/movies")
+      return fetch(`https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/movies?${globalGetOptions}`)
     })
     .then(resp => resp.json())
     .then(data => {

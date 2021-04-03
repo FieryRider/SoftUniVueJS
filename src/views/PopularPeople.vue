@@ -6,6 +6,7 @@
 
 <script>
 import PersonCard from "@/components/PersonCard.vue";
+import { getPopularPeopleRequest } from "@/service/actor_management.js"
 
 export default {
   components: {
@@ -17,36 +18,9 @@ export default {
     }
   },
   created: function() {
-    fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/actors?loadRelations=known_for")
-      .then(resp => resp.json())
-      .then(data => {
-        data.forEach(dbActor => {
-          const knownFor = dbActor['known_for'].map(movie => movie.title)
-          const actor = {
-            'name': dbActor.name,
-            'knownFor': knownFor,
-            'profilePictureUrl': dbActor['profile_picture_url'],
-            'personId': dbActor.objectId
-          }
-
-          this.people.push(actor)
-        })
-      })
-    fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/crew?loadRelations=known_for")
-      .then(resp => resp.json())
-      .then(data => {
-        data.forEach(dbCrew => {
-          const knownFor = dbCrew['known_for'].map(movie => movie.title)
-          const crew = {
-            'name': dbCrew.name,
-            'knownFor': knownFor,
-            'profilePictureUrl': dbCrew['profile_picture_url'],
-            'personId': dbCrew.objectId
-          }
-
-          this.people.push(crew)
-        })
-      })
+    getPopularPeopleRequest().then(people => {
+      this.people = people
+    })
   }
 };
 </script>

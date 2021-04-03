@@ -30,6 +30,8 @@
 
     <FormInput type="text" label="Profile Picture URL" name="profilePictureUrl" v-model="formData.profilePictureUrl" :v="$v.formData.profilePictureUrl" :errorMessages="errorMessages.profilePictureUrl" />
 
+    <FormInput type="textarea" label="Biography" name="biography" :rows="7" :cols="50" v-model="formData.biography" :v="$v.formData.biography" :errorMessages="errorMessages.biography" />
+
     <input type="submit" value="Add Actor">
     <input type="button" value="Cancel" 
       @click="handleClear">
@@ -76,7 +78,8 @@ export default {
         age: "",
         birthday: "",
         placeOfBirth: "",
-        profilePictureUrl: ""
+        profilePictureUrl: "",
+        biography: ""
       },
       errorMessages: {}
     }
@@ -104,6 +107,9 @@ export default {
       placeOfBirth: {
        required,
        locationValidator
+      },
+      biography: {
+        required
       }
     }
   },
@@ -130,6 +136,9 @@ export default {
       profilePictureUrl: {
         required: "Profile picture URL cannot be empty",
         url: "Profile picture URL must be a valid URL"
+      },
+      biography: {
+        required: "Biography cannot be empty"
       }
     }
   },
@@ -149,7 +158,8 @@ export default {
         'birthday': formData.birthday.$model,
         'age': parseInt(formData.age.$model),
         'place_of_birth': formData.placeOfBirth.$model,
-        'profile_picture_url': formData.profilePictureUrl.$model
+        'profile_picture_url': formData.profilePictureUrl.$model,
+        'biography': formData.biography.$model
       }
       addActorRequest(actor, this.$store.getters.getUserToken)
         .then(() => {

@@ -6,6 +6,12 @@
       @input="v.$touch()"
       v-if="['date', 'datetime', 'datetime-local', 'email', 'month', 'number', 'password', 'search', 'text', 'time', 'url', 'week'].includes(type)"
       :class="{ 'bg-danger': v.$error }">
+    <textarea :id="'input-' + name" :name="name" :rows="rows" :cols="cols"
+      v-model="model"
+      @input="v.$touch()"
+      v-else-if="type == 'textarea'"
+      :class="{ 'bg-danger': v.$error }">
+    </textarea>
     <select :id="'input-' + name" :name="name" 
       v-model="model"
       @input="v.$touch()"
@@ -48,6 +54,14 @@ export default {
     options: {
       type: Array,
       required: false
+    },
+    rows: {
+      type: Number,
+      required: false
+    },
+    cols: {
+      type: Number,
+      required: false
     }
   },
   computed: {
@@ -84,11 +98,21 @@ input[type='email'] {
   line-height: 2;
   color: #555;
 }
+textarea {
+  margin: 4px 0;
+  padding: 4px 16px;
+  border-color: #ced4da;
+  border-radius: .25rem;
+  border-width: 1px;
+  border-style: solid;
+  color: #555;
+}
 input[type='text']:focus,
 input[type='password']:focus,
 input[type='number']:focus,
 input[type='date']:focus,
-input[type='email']:focus {
+input[type='email']:focus,
+textarea:focus {
   border-color: rgba(150, 150, 150, 0.8);
   box-shadow: 0 1px 1px rgba(150, 150, 150, 0.075) inset, 0 0 8px rgba(150, 150, 150, 0.6);
   outline: 0 none;

@@ -43,6 +43,7 @@ import Spinner from "@/components/Spinner.vue"
 import FormInput from "@/components/FormInput.vue"
 import FormInputRadio from "@/components/FormInputRadio.vue"
 import { required, numeric, url } from "vuelidate/lib/validators"
+import { addActorRequest } from "@/service/actor_management"
 
 const locationValidator = (value) => {
   if (value.trim().length === 0)
@@ -142,30 +143,22 @@ export default {
         return
       }
 
-      fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/actors", {
-        method: "POST",
-        headers: {
-          'Content-Type': "application/json",
-          'user-token': this.$store.getters.getUserToken
-        },
-        body: JSON.stringify({
-          'name': formData.name.$model,
-          'gender': formData.gender.$model,
-          'birthday': formData.birthday.$model,
-          'age': parseInt(formData.age.$model),
-          'place_of_birth': formData.placeOfBirth.$model,
-          'profile_picture_url': formData.profilePictureUrl.$model
-        })
-      }).then(resp => {
-        this.isLoading = false
-        if (!resp.ok)
-          this.restError = `Server returned ${resp.status}: ${resp.statusText}`
-        else
+      const actor = {
+        'name': formData.name.$model,
+        'gender': formData.gender.$model,
+        'birthday': formData.birthday.$model,
+        'age': parseInt(formData.age.$model),
+        'place_of_birth': formData.placeOfBirth.$model,
+        'profile_picture_url': formData.profilePictureUrl.$model
+      }
+      addActorRequest(actor, this.$store.getters.getUserToken)
+        .then(() => {
+          this.isLoading = false
           this.infoMessage = "Actor added successfully"
-      }).catch(err => {
-        this.isLoading = false
-        this.restError = err
-      })
+        }).catch(err => {
+          this.isLoading = false
+          this.restError = err
+        })
     },
     handleClear: function() {
       Object.keys(this.formData).forEach(k => {

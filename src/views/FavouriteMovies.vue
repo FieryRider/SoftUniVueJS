@@ -6,6 +6,7 @@
 
 <script>
 import MovieCard from "@/components/MovieCard.vue";
+import { getFavouriteMoviesRequest } from "@/service/movie_management.js"
 
 export default {
   components: {
@@ -16,34 +17,23 @@ export default {
       movies: []
     }
   },
+  computed: {
+    restError: "",
+    isLoading: false
+  },
   created: function() {
-    fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/favourite_movies?relationsDepth=2", {
-      headers: {
-        'Conten-Type': "application/json",
-        'user-token': this.$store.getters.getUserToken
-      }
-    })
-      .then(resp => resp.json())
-      .then(data => {
-        console.log(data)
-        data.forEach(dbFavMovie => {
-          const dbMovie = dbFavMovie.movie
-          const movie = {
-            'title': dbMovie.title,
-            'releaseDate': new Date(dbMovie['release_date']),
-            'rating': dbMovie.rating,
-            'posterUrl': dbMovie['poster_url'],
-            'overview': dbMovie.overview,
-            'officialLanguage': dbMovie['official_language'],
-            'budget': dbMovie.budget,
-            'revenue': dbMovie.revenue,
-            'status': dbMovie.status,
-            'movieId': dbMovie.objectId,
-            'favourite': true
-          }
-
-          this.movies.push(movie)
-        })
+    getFavouriteMoviesRequest(this.$store.getters.getUserToken)
+      .then(movies => { this.movies = movies })
+      .catch(err => {
+        if ("respData" in err)
+          return err.respData.json()
+        this.isLoading = false
+        this.restError = err
+      }).then(data => {
+        if (data !== undefined) {
+          this.isLoading = false
+          this.restError = JSON.stringify(data)
+        }
       })
   }
 };

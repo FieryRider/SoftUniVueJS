@@ -6,6 +6,7 @@
 
 <script>
 import MovieCard from "@/components/MovieCard.vue";
+import { getAllMoviesRequest } from "@/service/movie_management.js"
 
 export default {
   components: {
@@ -25,57 +26,12 @@ export default {
     },
   },
   created: function() {
-    let favouriteMoviesIds = undefined
-    let popularMoviesIds = undefined
-    let favouriteMoviesRequest = Promise.resolve()
-    if (this.isUserLogged) {
-      favouriteMoviesRequest = fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/favourite_movies?relationsDepth=1", {
-        headers: {
-          'Conten-Type': "application/json",
-          'user-token': this.$store.getters.getUserToken
-        }
-      })
-    }
-    favouriteMoviesRequest
-      .then(resp => {
-        if (resp === undefined)
-          return Promise.resolve()
-        else
-          return resp.json()
-      })
-      .then(data => {
-        favouriteMoviesIds = null
-        if (data != undefined && !("errorData" in data))
-          favouriteMoviesIds = data.map(favMovie => favMovie.movie.objectId)
-
-        return fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/popular_movies?relationsDepth=1")
-      })
-      .then(resp => resp.json())
-      .then(data => {
-        popularMoviesIds = data.map(popularMovie => popularMovie.movie.objectId)
-        return fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/movies")
-      })
-      .then(resp => resp.json())
-      .then(data => {
-        data.forEach(dbMovie => {
-          const movie = {
-            'title': dbMovie.title,
-            'releaseDate': new Date(dbMovie['release_date']),
-            'rating': dbMovie.rating,
-            'posterUrl': dbMovie['poster_url'],
-            'overview': dbMovie.overview,
-            'officialLanguage': dbMovie['official_language'],
-            'budget': dbMovie.budget,
-            'revenue': dbMovie.revenue,
-            'status': dbMovie.status,
-            'movieId': dbMovie.objectId,
-            'favourite': favouriteMoviesIds == null ? false : favouriteMoviesIds.includes(dbMovie.objectId),
-            'popular': popularMoviesIds == null ? false : popularMoviesIds.includes(dbMovie.objectId)
-          }
-
-          this.movies.push(movie)
-        })
-      })
+    if (this.isUserLogged)
+      getAllMoviesRequest(this.$store.getters.getUserToken)
+        .then(movies => this.movies = movies)
+    else
+      getAllMoviesRequest()
+        .then(movies => this.movies = movies)
   }
 };
 </script>

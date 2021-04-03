@@ -27,6 +27,7 @@
 import FormInput from "@/components/FormInput.vue"
 import Spinner from "@/components/Spinner.vue"
 import { required, minLength, email, alphaNum, sameAs } from "vuelidate/lib/validators"
+import { registerRequest } from "@/service/user_management"
 export default {
   components: {
     FormInput,
@@ -96,23 +97,22 @@ export default {
         this.isLoading = false
         return
       }
-      fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/users/register", {
-        method: "POST",
-        body: JSON.stringify({
-          'username': formData.username.$model,
-          'password': formData.password.$model,
-          'email': formData.email.$model
-        })
-      }).then(resp => {
-        this.isLoading = false
-        if (!resp.ok)
-          this.restError = `Server returned ${resp.status}: ${resp.statusText}`
-        else
+
+      registerRequest(formData.username.$model, formData.password.$model, formData.email.$model)
+        .then(() => {
+          this.isLoading = false
           this.$router.push("login")
-      }).catch(err => {
-        this.isLoading = false
-        this.restError = err
-      })
+        }).catch(err => {
+          if ("respData" in err)
+            return err.respData.json()
+          this.isLoading = false
+          this.restError = err
+        }).then(data => {
+          if (data !== undefined) {
+            this.isLoading = false
+            this.restError = JSON.stringify(data)
+          }
+        })
     },
     handleClear: function() {
       Object.keys(this.formData).forEach(k => {

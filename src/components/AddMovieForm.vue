@@ -57,6 +57,7 @@
 import Spinner from "@/components/Spinner.vue"
 import FormInput from "@/components/FormInput.vue"
 import { required, alpha, numeric, url } from "vuelidate/lib/validators"
+import { addMovieRequest } from "@/service/movie_management.js"
 
 const titleValidator = (value) => {
   if (value.trim().length === 0)
@@ -210,62 +211,27 @@ export default {
         return
       }
 
-      let addedMovieId
-      fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/movies", {
-        method: "POST",
-        headers: {
-          'Content-Type': "application/json",
-          'user-token': this.$store.getters.getUserToken
-        },
-        body: JSON.stringify({
-          'title': formData.title.$model,
-          'status': formData.status.$model,
-          'overview': formData.overview.$model,
-          'rating': parseInt(formData.rating.$model),
-          'budget': parseFloat(formData.budget.$model),
-          'revenue': parseFloat(formData.revenue.$model),
-          'release_date': formData.releaseDate.$model,
-          'poster_url': formData.posterUrl.$model,
-          'official_language': formData.officialLanguage.$model,
-        })
-      }).then(resp => {
-        if (!resp.ok)
-          this.restError = `Server returned ${resp.status}: ${resp.statusText}`
-        return resp.json()
-      }).then(movie => {
-        addedMovieId = movie.objectId
-        const cast = formData.selectedActors.$model.map(actor => actor.objectId)
-        return fetch(`https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/movies/${addedMovieId}/cast`, {
-          method: "POST",
-          headers: {
-            'Content-Type': "application/json",
-            'user-token': this.$store.getters.getUserToken
-          },
-          body: JSON.stringify(cast)
-        })
-      }).then(resp => {
-        if (!resp.ok)
-          this.restError = `Server returned ${resp.status}: ${resp.statusText}`
+      const movie = {
+        'title': formData.title.$model,
+        'status': formData.status.$model,
+        'overview': formData.overview.$model,
+        'rating': parseInt(formData.rating.$model),
+        'budget': parseFloat(formData.budget.$model),
+        'revenue': parseFloat(formData.revenue.$model),
+        'release_date': formData.releaseDate.$model,
+        'poster_url': formData.posterUrl.$model,
+        'official_language': formData.officialLanguage.$model,
+      }
 
-        const genres = formData.selectedGenres.$model.map(genre => genre.objectId)
-        return fetch(`https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/movies/${addedMovieId}/genres`, {
-          method: "POST",
-          headers: {
-            'Content-Type': "application/json",
-            'user-token': this.$store.getters.getUserToken
-          },
-          body: JSON.stringify(genres)
-        }) 
-      }).then(resp => {
-        this.isLoading = false
-        if (!resp.ok) {
-          this.restError = `Server returned ${resp.status}: ${resp.statusText}`
-        } else {
-          this.infoMessage = "Movie added successfully"
-        }
+      const cast = formData.selectedActors.$model.map(actor => actor.objectId)
+      const genres = formData.selectedGenres.$model.map(genre => genre.objectId)
+
+      addMovieRequest(movie, cast, genres, this.$store.getters.getUserToken).then(() => {
+        this.infoMessage = "Movie added successfully"
       }).catch(err => {
-        this.isLoading = false
         this.restError = err
+      }).then(() => {
+        this.isLoading = false
       })
     },
     handleClear: function() {

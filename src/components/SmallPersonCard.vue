@@ -1,13 +1,13 @@
 <template>
   <div class="person-card">
     <section class="person-card__profile-picture">
-      <router-link :to="'/person/' + personId">
+      <router-link :to="'/people/' + personId">
         <img :src="profilePictureUrl" :alt="profilePictureUrlAlt" />
       </router-link>
     </section>
     <section class="person-card__content">
       <h3 class="person-card__title">
-        <router-link :to="'/person/' + personId">{{ name }}</router-link>
+        <router-link :to="'/people/' + personId">{{ name }}</router-link>
       </h3>
       <div class="person-card__role">{{ role }}</div>
     </section>

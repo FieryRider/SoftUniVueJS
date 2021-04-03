@@ -6,7 +6,7 @@
           <img :src="posterUrl" alt="">
         </section>
         <section class="movie-info-header__info">
-          <h1>{{ title }}<span class="release-date">({{ releaseDate.getFullYear() }})</span></h1>
+          <h1>{{ title }}<span class="release-date">({{ releaseDate ? releaseDate.getFullYear() : '' }})</span></h1>
           <div class="movie-info-header__general-info">
             <div class="movie-info-header__certification">{{ certification }}</div>
             <div class="movie-info-header__release-date">{{ releaseDateString }}</div>
@@ -95,9 +95,7 @@ export default {
     },
     genresString: function() {
       const formattedGenres = this.genres.map(genre => {
-        let words = genre.split("_")
-        words = words.map(word => word[0].toUpperCase() + word.substring(1))
-        return words.join(" ")
+        return genre.split("_").map(word => word[0].toUpperCase() + word.substring(1)).join(" ")
       })
       return formattedGenres.join(", ")
     },

@@ -1,25 +1,26 @@
 <template>
   <main class="movie-grid">
     <MovieCard v-for="movie in movies" :key="movie.movieId" color="white" :title="movie.title" :releaseDate="movie.releaseDate" :rating="movie.rating" :posterUrl="movie.posterUrl" :favourite="movie.favourite" :movieId="movie.movieId" />
+    <Spinner class="spinner"
+      v-if="isLoading"/>
   </main>
 </template>
 
 <script>
-import MovieCard from "@/components/MovieCard.vue";
+import MovieCard from "@/components/MovieCard.vue"
+import Spinner from "@/components/Spinner.vue"
 import { getFavouriteMoviesRequest } from "@/service/movie_management.js"
 
 export default {
   components: {
-    MovieCard
+    MovieCard,
+    Spinner
   },
   data: () => {
     return {
-      movies: []
+      movies: [],
+      isLoading: true
     }
-  },
-  computed: {
-    restError: "",
-    isLoading: false
   },
   created: function() {
     getFavouriteMoviesRequest(this.$store.getters.getUserToken)
@@ -27,11 +28,10 @@ export default {
       .catch(err => {
         if ("respData" in err)
           return err.respData.json()
-        this.isLoading = false
         this.restError = err
       }).then(data => {
+        this.isLoading = false
         if (data !== undefined) {
-          this.isLoading = false
           this.restError = JSON.stringify(data)
         }
       })

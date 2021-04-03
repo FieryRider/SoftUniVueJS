@@ -156,6 +156,19 @@ const getPopularMoviesRequest = (userToken) => {
       return Promise.resolve(movies)
     })
 }
+async function addMovieToActors(movieId, actorsIds, userToken) {
+  for (const actorId of actorsIds) {
+    await fetch(`https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/actors/${actorId}/known_for`, {
+      method: "PUT",
+      headers: {
+        'Content-Type': "application/json",
+        'user-token': userToken
+      },
+      body: JSON.stringify([movieId])
+    })
+  }
+}
+
 const addMovieRequest = (movie, cast, genres, userToken) => {
   let addedMovieId
   return fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/movies", {
@@ -196,6 +209,8 @@ const addMovieRequest = (movie, cast, genres, userToken) => {
     if (!resp.ok)
       return Promise.reject(`Server returned ${resp.status}: ${resp.statusText}`)
 
+    return addMovieToActors(addedMovieId, cast, userToken)
+  }).then(() => {
     return Promise.resolve("Movie added successfully")
   })
 }

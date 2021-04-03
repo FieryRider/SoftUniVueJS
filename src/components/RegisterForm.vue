@@ -6,46 +6,14 @@
     >
       {{ restError }}
     </div>
-    <label for="input-username">Username</label>
-    <input type="text" id="input-username" name="username" 
-      v-model.lazy.trim="$v.formData.username.$model"
-      :class="{ 'bg-danger': $v.formData.username.$error }">
-      <div class="error" 
-        v-if="$v.formData.username.$error">
-        <p v-if="!$v.formData.username.required">Username cannot be empty</p>
-        <p v-if="!$v.formData.username.minLength">Username must be at least {{ $v.formData.username.$params.minLength.min }} characters long</p>
-        <p v-if="!$v.formData.username.alphaNum">Username must contain only letters and numbers</p>
-      </div>
 
-    <label for="input-password">Password (8 characters minimum)</label>
-    <input type="password" id="input-password" name="password" 
-      v-model="$v.formData.password.$model"
-      :class="{ 'bg-danger': $v.formData.password.$error }">
-      <div class="error" 
-        v-if="$v.formData.password.$error">
-        <p v-if="!$v.formData.password.required">Password cannot be empty</p>
-        <p v-if="!$v.formData.password.minLength">Password must be at least {{ $v.formData.password.$params.minLength.min }} characters long</p>
-      </div>
+    <FormInput type="text" label="Username" name="username" v-model="formData.username" :v="$v.formData.username" :errorMessages="errorMessages.username" />
 
-    <label for="input-password-confirm">Password Confirm</label>
-    <input type="password" id="input-password-confirm" name="passwordConfirm" 
-      v-model="$v.formData.passwordConfirm.$model"
-      :class="{ 'bg-danger': $v.formData.passwordConfirm.$error }">
-      <div class="error" 
-        v-if="$v.formData.passwordConfirm.$error">
-        <p v-if="!$v.formData.passwordConfirm.required">Password Confirm cannot be empty</p>
-        <p v-if="!$v.formData.passwordConfirm.sameAsPassword">Password and Password Confirm differ</p>
-      </div>
+    <FormInput type="password" label="Password (8 characters minimum)" name="password" v-model="formData.password" :v="$v.formData.password" :errorMessages="errorMessages.password" />
 
-    <label for="input-email">Email</label>
-    <input type="email" id="input-email" name="email" 
-      v-model.lazy.trim="$v.formData.email.$model"
-      :class="{ 'bg-danger': $v.formData.email.$error }">
-      <div class="error" 
-        v-if="$v.formData.email.$error">
-        <p v-if="!$v.formData.email.required">Email cannot be empty</p>
-        <p v-if="!$v.formData.email.email">Email has to be a valid email</p>
-      </div>
+    <FormInput type="password" label="Password Confirm" name="passwordConfirm" v-model="formData.passwordConfirm" :v="$v.formData.passwordConfirm" :errorMessages="errorMessages.passwordConfirm" />
+
+    <FormInput type="email" label="Email" name="email" v-model="formData.email" :v="$v.formData.email" :errorMessages="errorMessages.email" />
 
     <input type="submit" value="Register">
     <input type="button" value="Cancel" 
@@ -56,13 +24,15 @@
 </template>
 
 <script>
+import FormInput from "@/components/FormInput.vue"
 import Spinner from "@/components/Spinner.vue"
 import { required, minLength, email, alphaNum, sameAs } from "vuelidate/lib/validators"
 export default {
   components: {
+    FormInput,
     Spinner
   },
-  data: () => {
+  data: function() {
     return {
       isLoading: false,
       restError: "",
@@ -71,7 +41,8 @@ export default {
         password: "",
         passwordConfirm: "",
         email: ""
-      }
+      },
+      errorMessages: {}
     }
   },
   validations: {
@@ -92,6 +63,27 @@ export default {
       email: { 
         required,
         email
+      }
+    }
+  },
+  created: function() {
+    this.errorMessages = {
+      username: {
+        required: "Username cannot be empty",
+        alphaNum: `Username must contain only letters and numbers` ,
+        minLength: `Username must be at least ${this.$v.formData.username.$params.minLength.min} characters long`
+      },
+      password: {
+        required: "Password cannot be empty",
+        minLength: `Password must be at least ${ this.$v.formData.password.$params.minLength.min } characters long`
+      },
+      passwordConfirm: {
+        required: "Password Confirm cannot be empty",
+        sameAsPassword: "Password and Password Confirm differ"
+      },
+      email: {
+        required: "Email cannot be empty",
+        email: "Email has to be a valid email"
       }
     }
   },
@@ -126,32 +118,13 @@ export default {
       Object.keys(this.formData).forEach(k => {
         this.formData[k] = ""
       })
+      this.$v.$reset()
     }
   }
 }
 </script>
 
 <style scoped>
-input[type='text'],
-input[type='password'],
-input[type='email'] {
-  width: 100%;
-  margin: 4px 0 8px 0;
-  padding: 4px 16px;
-  border-color: #ced4da;
-  border-radius: .25rem;
-  border-width: 1px;
-  border-style: solid;
-  line-height: 2;
-  color: #555;
-}
-input[type='text']:focus,
-input[type='password']:focus,
-input[type='email']:focus {
-  border-color: rgba(150, 150, 150, 0.8);
-  box-shadow: 0 1px 1px rgba(150, 150, 150, 0.075) inset, 0 0 8px rgba(150, 150, 150, 0.6);
-  outline: 0 none;
-}
 input[type='submit'] {
   margin: 5px;
   padding: 8px 20px;

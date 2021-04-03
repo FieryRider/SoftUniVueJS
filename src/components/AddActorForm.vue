@@ -12,80 +12,23 @@
     >
       {{ infoMessage }}
     </div>
-    <section class="form-field">
-      <label for="input-name">Name</label>
-      <input type="text" id="input-name" name="name" 
-        v-model.lazy.trim="$v.formData.name.$model"
-        :class="{ 'bg-danger': $v.formData.name.$error }">
-      <div class="error" 
-        v-if="$v.formData.name.$error">
-        <p v-if="!$v.formData.name.required">Name cannot be empty</p>
-        <p v-if="!$v.formData.name.nameValidator">Name must contain only letters and numbers</p>
-      </div>
-    </section>
+    <FormInput type="text" label="Name" name="name" v-model="formData.name" :v="$v.formData.name" :errorMessages="errorMessages.name" />
 
     <section class="form-field">
-      <label for="input-gender">Gender </label>
-      <input type="radio" id="input-gender" name="gender" value="male"
-        v-model="$v.formData.gender.$model"
-        :class="{ 'bg-danger': $v.formData.gender.$error }">
-      <label class="radio-label" for="male">Male</label>
-      <input type="radio" id="input-gender" name="gender" value="female"
-        v-model="$v.formData.gender.$model"
-        :class="{ 'bg-danger': $v.formData.gender.$error }">
-      <label class="radio-label" for="female">Female</label><br>
-      <div class="error" 
-        v-if="$v.formData.gender.$error">
-        <p v-if="!$v.formData.gender.required">You must select gender</p>
-      </div>
+      <label for="">Gender</label>
+      <section class="radio-buttons">
+        <FormInputRadio label="Male" name="gender" v-model="formData.gender" :v="$v.formData.gender" value="male" :errorMessages="errorMessages.gender" />
+        <FormInputRadio label="Female" name="gender" v-model="formData.gender" :v="$v.formData.gender" value="female" :errorMessages="errorMessages.gender" />
+      </section>
     </section>
 
-    <section class="form-field">
-      <label for="input-age">Age</label>
-      <input type="number" id="input-age" name="age" 
-        v-model="$v.formData.age.$model"
-        :class="{ 'bg-danger': $v.formData.age.$error }">
-      <div class="error" 
-        v-if="$v.formData.age.$error">
-        <p v-if="!$v.formData.age.required">Age cannot be empty</p>
-        <p v-if="!$v.formData.age.numeric">Age must be a number</p>
-      </div>
-    </section>
+    <FormInput type="number" label="Age" name="age" v-model="formData.age" :v="$v.formData.age" :errorMessages="errorMessages.age" />
 
-    <section class="form-field">
-      <label for="input-birthday">Birthday</label>
-      <input type="date" id="input-birthday" name="birthday" 
-        v-model.lazy.trim="$v.formData.birthday.$model"
-        :class="{ 'bg-danger': $v.formData.birthday.$error }">
-      <div class="error" 
-        v-if="$v.formData.birthday.$error">
-        <p v-if="!$v.formData.birthday.required">Birthday cannot be empty</p>
-      </div>
-    </section>
+    <FormInput type="date" label="Birthday" name="birthday" v-model="formData.birthday" :v="$v.formData.birthday" :errorMessages="errorMessages.birthday" />
 
-    <section class="form-field">
-      <label for="input-place-of-birth">Place of Birth</label>
-      <input type="text" id="input-place-of-birth" name="placeOfBirth" 
-        v-model.lazy.trim="$v.formData.placeOfBirth.$model"
-        :class="{ 'bg-danger': $v.formData.placeOfBirth.$error }">
-      <div class="error" 
-        v-if="$v.formData.placeOfBirth.$error">
-        <p v-if="!$v.formData.placeOfBirth.required">Place of Birth cannot be empty</p>
-        <p v-if="!$v.formData.placeOfBirth.locationValidator">Place of Birth must contain only letters, numbers, commas, and hiphens</p>
-      </div>
-    </section>
+    <FormInput type="text" label="Place of Birth" name="placeOfBirth" v-model="formData.placeOfBirth" :v="$v.formData.placeOfBirth" :errorMessages="errorMessages.placeOfBirth" />
 
-    <section class="form-field">
-      <label for="input-profile-picture-url">Profile picture URL</label>
-      <input type="text" id="input-profile-picture-url" name="profilePictureUrl" 
-        v-model.lazy.trim="$v.formData.profilePictureUrl.$model"
-        :class="{ 'bg-danger': $v.formData.profilePictureUrl.$error }">
-      <div class="error" 
-        v-if="$v.formData.profilePictureUrl.$error">
-        <p v-if="!$v.formData.profilePictureUrl.required">Profile picture URL cannot be empty</p>
-        <p v-if="!$v.formData.profilePictureUrl.url">Profile picture URL must be a valid URL</p>
-      </div>
-    </section>
+    <FormInput type="text" label="Profile Picture URL" name="profilePictureUrl" v-model="formData.profilePictureUrl" :v="$v.formData.profilePictureUrl" :errorMessages="errorMessages.profilePictureUrl" />
 
     <input type="submit" value="Add Actor">
     <input type="button" value="Cancel" 
@@ -97,6 +40,8 @@
 
 <script>
 import Spinner from "@/components/Spinner.vue"
+import FormInput from "@/components/FormInput.vue"
+import FormInputRadio from "@/components/FormInputRadio.vue"
 import { required, numeric, url } from "vuelidate/lib/validators"
 
 const locationValidator = (value) => {
@@ -115,6 +60,8 @@ const nameValidator = (value) => {
 
 export default {
   components: {
+    FormInput,
+    FormInputRadio,
     Spinner
   },
   data: () => {
@@ -129,7 +76,8 @@ export default {
         birthday: "",
         placeOfBirth: "",
         profilePictureUrl: ""
-      }
+      },
+      errorMessages: {}
     }
   },
   validations: {
@@ -155,6 +103,32 @@ export default {
       placeOfBirth: {
        required,
        locationValidator
+      }
+    }
+  },
+  created: function() {
+    this.errorMessages = {
+      name: {
+        required: "Name cannot be empty",
+        nameValidator: "Name must contain only letters and numbers"
+      },
+      gender: {
+        required: "You must select gender"
+      },
+      age: {
+        required: "Age cannot be empty",
+        numeric: "Age must be a number"
+      },
+      birthday: {
+        required: "Birthday cannot be empty"
+      },
+      placeOfBirth: {
+        required: "Place of Birth cannot be empty",
+        locationValidator: "Place of Birth must contain only letters, numbers, commas, and hiphens"
+      },
+      profilePictureUrl: {
+        required: "Profile picture URL cannot be empty",
+        url: "Profile picture URL must be a valid URL"
       }
     }
   },
@@ -203,26 +177,6 @@ export default {
 </script>
 
 <style scoped>
-input[type='text'],
-input[type='number'],
-input[type='date'] {
-  width: 100%;
-  margin: 4px 0 8px 0;
-  padding: 4px 16px;
-  border-color: #ced4da;
-  border-radius: .25rem;
-  border-width: 1px;
-  border-style: solid;
-  line-height: 2;
-  color: #555;
-}
-input[type='text']:focus,
-input[type='number']:focus,
-input[type='date']:focus {
-  border-color: rgba(150, 150, 150, 0.8);
-  box-shadow: 0 1px 1px rgba(150, 150, 150, 0.075) inset, 0 0 8px rgba(150, 150, 150, 0.6);
-  outline: 0 none;
-}
 input[type='submit'] {
   margin: 5px;
   padding: 8px 20px;
@@ -265,5 +219,12 @@ input[type='button']:hover {
 }
 .spinner {
   margin: 0 15px;
+}
+.radio-buttons {
+  margin: 4px 0;
+  display: flex;
+}
+.radio-buttons section:not(:first-child) {
+  margin-left: 20px
 }
 </style>

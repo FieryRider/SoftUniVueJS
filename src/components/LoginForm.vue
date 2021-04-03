@@ -9,12 +9,10 @@
     <div class="error" v-if="false">
       <p>Username or password is incorrect</p>
     </div>
-    <label for="input-username">Username</label>
-    <input type="text" id="input-username" name="username"
-      v-model.lazy.trim="$v.formData.username.$model">
-    <label for="password">Password</label>
-    <input type="password" id="input-password" name="password"
-      v-model.lazy="$v.formData.password.$model">
+    <FormInput type="text" label="Username" name="username" v-model="formData.username" :v="$v.formData.username" :errorMessages="errorMessages.username" />
+
+    <FormInput type="password" label="Password" name="password" v-model="formData.password" :v="$v.formData.password" :errorMessages="errorMessages.password" />
+
     <input type="submit" value="Login" @click="handleLogin">
     <input type="button" value="Reset password">
     <Spinner class="spinner" 
@@ -23,10 +21,12 @@
 </template>
 
 <script>
+import FormInput from "@/components/FormInput.vue"
 import Spinner from "@/components/Spinner.vue"
 import { required } from "vuelidate/lib/validators"
 export default {
   components: {
+    FormInput,
     Spinner
   },
   data: () => {
@@ -36,7 +36,8 @@ export default {
       formData: {
         username: "",
         password: "",
-      }
+      },
+      errorMessages: {}
     }
   },
   validations: {
@@ -49,11 +50,26 @@ export default {
       }
     }
   },
+  created: function() {
+    this.errorMessages = {
+      'username': {
+        required: "Username cannot be empty",
+      },
+      'password': {
+        required: "Password cannot be empty",
+      }
+    }
+  },
   methods: {
     handleLogin: function() {
       this.$v.$touch()
       const { formData } =  this.$v
       this.isLoading = true
+      if (formData.$anyError || !formData.$dirty) {
+        this.isLoading = false
+        return
+      }
+
       fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/users/login", {
         method: 'POST',
         headers: {
@@ -82,23 +98,6 @@ export default {
           }
         })
       }).then(resp => {
-        /*
-          if (!resp.ok && resp.status >= 500)
-            throw new Error({ 'status': resp.status, 'statusText': resp.statusText })
-          else if (!resp.ok && resp.status < 500)
-            return Promise.reject({ respData: resp })
-
-          return resp.json()
-        }).then(() => {
-          this.isFavourite = true
-        }).catch(err => {
-          if ("respData" in err)
-            return err.respData.json()
-        }).then(data => {
-          if (data !== undefined)
-            console.warn("DbError", data)
-        })
-         */
         if (!resp.ok && resp.status >= 500)
           throw new Error({ 'status': resp.status, 'statusText': resp.statusText })
         else if (!resp.ok && resp.status < 500)
@@ -117,7 +116,6 @@ export default {
         if (data !== undefined) {
           this.isLoading = false
           this.restError = JSON.stringify(data)
-          console.warn(JSON.stringify(data))
         }
       })
     }
@@ -126,24 +124,6 @@ export default {
 </script>
 
 <style scoped>
-input[type='text'],
-input[type='password'] {
-  width: 100%;
-  margin: 4px 0 8px 0;
-  padding: 4px 16px;
-  border-color: #ced4da;
-  border-radius: .25rem;
-  border-width: 1px;
-  border-style: solid;
-  line-height: 2;
-  color: #555;
-}
-input[type='text']:focus,
-input[type='password']:focus {
-  border-color: rgba(150, 150, 150, 0.8);
-  box-shadow: 0 1px 1px rgba(150, 150, 150, 0.075) inset, 0 0 8px rgba(150, 150, 150, 0.6);
-  outline: 0 none;
-}
 input[type='submit'] {
   margin: 5px;
   padding: 8px 20px;

@@ -12,20 +12,10 @@
     >
       {{ infoMessage }}
     </div>
-    <section class="form-field">
-      <label for="input-title">Title</label>
-      <input type="text" id="input-title" name="title" 
-        v-model.lazy.trim="$v.formData.title.$model"
-        :class="{ 'bg-danger': $v.formData.title.$error }">
-      <div class="error" 
-        v-if="$v.formData.title.$error">
-        <p v-if="!$v.formData.title.required">Title cannot be empty</p>
-        <p v-if="!$v.formData.title.titleValidator">Title must contain only letters and numbers</p>
-      </div>
-    </section>
+    <FormInput type="text" label="Title" name="title" v-model="formData.title" :v="$v.formData.title" :errorMessages="errorMessages.title" />
 
     <section class="form-field">
-      <label for="input-gender">Status </label>
+      <label for="input-status">Status </label>
       <select name="status" id="input-status"
         v-model="$v.formData.status.$model">
         <option value="released">Released</option>
@@ -37,93 +27,23 @@
       </div>
     </section>
 
-    <section class="form-field">
-      <label for="input-overview">Overview</label>
-      <input type="text" id="input-overview" name="overview" 
-        v-model.lazy.trim="$v.formData.overview.$model"
-        :class="{ 'bg-danger': $v.formData.overview.$error }">
-      <div class="error" 
-        v-if="$v.formData.overview.$error">
-        <p v-if="!$v.formData.overview.required">Overview cannot be empty</p>
-      </div>
-    </section>
+    <FormInput type="text" label="Overview" name="overview" v-model="formData.overview" :v="$v.formData.overview" :errorMessages="errorMessages.overview" />
 
-    <section class="form-field">
-      <label for="input-budget">Budget</label>
-      <input type="number" id="input-budget" name="budget" 
-        v-model.lazy.trim="$v.formData.budget.$model"
-        :class="{ 'bg-danger': $v.formData.budget.$error }">
-      <div class="error" 
-        v-if="$v.formData.budget.$error">
-        <p v-if="!$v.formData.budget.required">Budget cannot be empty</p>
-      </div>
-      </section>
+    <FormInput type="number" label="Budget" name="budget" v-model="formData.budget" :v="$v.formData.budget" :errorMessages="errorMessages.budget" />
 
-    <section class="form-field">
-      <label for="input-revenue">Revenue</label>
-      <input type="number" id="input-revenue" name="revenue" 
-        v-model.lazy.trim="$v.formData.revenue.$model"
-        :class="{ 'bg-danger': $v.formData.revenue.$error }">
-      </section>
+    <FormInput type="number" label="Revenue" name="revenue" v-model="formData.revenue" :v="$v.formData.revenue" :errorMessages="errorMessages.revenue" />
 
-    <section class="form-field">
-      <label for="input-release-date">Release Date</label>
-      <input type="date" id="input-release-date" name="releaseDate" 
-        v-model.lazy.trim="$v.formData.releaseDate.$model"
-        :class="{ 'bg-danger': $v.formData.releaseDate.$error }">
-      <div class="error" 
-        v-if="$v.formData.releaseDate.$error">
-        <p v-if="!$v.formData.releaseDate.required">Release date cannot be empty</p>
-      </div>
-      </section>
+    <FormInput type="date" label="Release Date" name="releaseDate" v-model="formData.releaseDate" :v="$v.formData.releaseDate" :errorMessages="errorMessages.releaseDate" />
 
-    <section class="form-field">
-      <label for="input-rating">Rating</label>
-      <input type="number" id="input-rating" name="rating" 
-        v-model.lazy.trim="$v.formData.rating.$model"
-        :class="{ 'bg-danger': $v.formData.rating.$error }">
-      </section>
+    <FormInput type="number" label="Rating" name="rating" v-model="formData.rating" :v="$v.formData.rating" :errorMessages="errorMessages.rating" />
 
-    <section class="form-field">
-      <label for="input-official-language">Official language</label>
-      <input type="text" id="input-official-language" name="officialLanguage" 
-        v-model.lazy.trim="$v.formData.officialLanguage.$model"
-        :class="{ 'bg-danger': $v.formData.officialLanguage.$error }">
-      <div class="error" 
-        v-if="$v.formData.officialLanguage.$error">
-        <p v-if="!$v.formData.officialLanguage.required">Official language cannot be empty</p>
-      </div>
-    </section>
+    <FormInput type="text" label="Official Language" name="officialLanguage" v-model="formData.officialLanguage" :v="$v.formData.officialLanguage" :errorMessages="errorMessages.officialLanguage" />
 
-    <section class="form-field">
-      <label for="input-poster-url">Poster URL</label>
-      <input type="text" id="input-poster-url" name="posterUrl" 
-        v-model.lazy.trim="$v.formData.posterUrl.$model"
-        :class="{ 'bg-danger': $v.formData.posterUrl.$error }">
-      <div class="error" 
-        v-if="$v.formData.posterUrl.$error">
-        <p v-if="!$v.formData.posterUrl.required">Poster URL cannot be empty</p>
-        <p v-if="!$v.formData.posterUrl.url">Poster URL has to be valid</p>
-      </div>
-    </section>
+    <FormInput type="text" label="Poster URL" name="posterUrl" v-model="formData.posterUrl" :v="$v.formData.posterUrl" :errorMessages="errorMessages.posterUrl" />
 
-    <section class="form-field">
-      <label class="select-label" for="input-actors">Actors:</label>
-      <select name="actors" id="input-actors" multiple v-model="formData.selectedActors">
-        <option v-for="actor in actors" :value="actor" :key="actor.actorId">
-          {{ actor.name }}
-        </option>
-      </select>
-    </section>
+    <FormInput type="multipleSelect" label="Actors" name="actors" :options="actors"  v-model="formData.selectedActors" :v="$v.formData.selectedActors" :errorMessages="errorMessages.selectedActors" />
 
-    <section class="form-field">
-      <label class="select-label" for="input-genres">Genres:</label>
-      <select name="genres" id="input-genres" multiple v-model="formData.selectedGenres">
-        <option v-for="genre in formattedGenres" :value="genre" :key="genre.genreId">
-          {{ genre.name }}
-        </option>
-      </select>
-    </section>
+    <FormInput type="multipleSelect" label="Genres" name="genres" :options="genres" v-model="formData.selectedGenres" :v="$v.formData.selectedGenres" :errorMessages="errorMessages.selectedGenres" />
 
     <input type="submit" value="Add Movie">
     <input type="button" value="Cancel" 
@@ -135,6 +55,7 @@
 
 <script>
 import Spinner from "@/components/Spinner.vue"
+import FormInput from "@/components/FormInput.vue"
 import { required, alpha, numeric, url } from "vuelidate/lib/validators"
 
 const titleValidator = (value) => {
@@ -146,16 +67,63 @@ const titleValidator = (value) => {
 
 export default {
   components: {
+    FormInput,
     Spinner
   },
   created: function() {
+    this.errorMessages = {
+      title: {
+        required: "Title cannot be empty",
+        titleValidator: "Title must contain only letters and numbers"
+      },
+      status: {
+        required: "You must select status"
+      },
+      overview: {
+        required: "Overview cannot be empty"
+      },
+      budget: {
+        required: "Budget cannot be empty"
+      },
+      revenue: {
+      },
+      releaseDate: {
+        required: "Release date cannot be empty"
+      },
+      rating: {
+      },
+      officialLanguage: {
+        required: "Official language cannot be empty"
+      },
+      posterUrl: {
+        required: "Poster URL cannot be empty",
+        url: "Poster URL has to be valid"
+      },
+      selectedActors: {
+      },
+      selectedGenres: {
+      }
+    }
+
     const actorsRequst = fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/actors?pageSize=100")
     const genresRequest = fetch("https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/genres?pageSize=100")
     Promise.all([actorsRequst, genresRequest])
       .then(resp => Promise.all(resp.map(r => r.json())))
       .then(([actors, genres]) => {
-        this.actors = actors
-        this.genres = genres
+        this.actors = actors.map(actor => {
+          return {
+            objectId: actor.objectId,
+            value: actor,
+            text: actor.name
+          }
+        })
+        this.genres = genres.map(genre => {
+          return {
+            objectId: genre.objectId,
+            value: genre,
+            text: genre.name
+          }
+        })
       })
       
   },
@@ -178,7 +146,8 @@ export default {
         officialLanguage: "",
         selectedGenres: [],
         selectedActors: []
-      }
+      },
+      errorMessages: {}
     }
   },
   validations: {
@@ -315,26 +284,6 @@ export default {
 </script>
 
 <style scoped>
-input[type='text'],
-input[type='number'],
-input[type='date'] {
-  width: 100%;
-  margin: 4px 0 8px 0;
-  padding: 4px 16px;
-  border-color: #ced4da;
-  border-radius: .25rem;
-  border-width: 1px;
-  border-style: solid;
-  line-height: 2;
-  color: #555;
-}
-input[type='text']:focus,
-input[type='number']:focus,
-input[type='date']:focus {
-  border-color: rgba(150, 150, 150, 0.8);
-  box-shadow: 0 1px 1px rgba(150, 150, 150, 0.075) inset, 0 0 8px rgba(150, 150, 150, 0.6);
-  outline: 0 none;
-}
 input[type='submit'] {
   margin: 5px;
   padding: 8px 20px;
@@ -367,27 +316,6 @@ input[type='button'] {
 input[type='button']:hover {
   cursor: pointer;
   background-color: rgba(0, 0, 0, 0.05);
-}
-select {
-  min-width: 200px;
-  padding: 5px;
-  border-radius: 5px;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  background-color: #fff;
-  scrollbar-width: thin;
-}
-select option {
-  padding: 5px;
-  border-radius: 3px;
-}
-
-.select-label {
-  margin-right: 10px;
-  vertical-align: top;
-}
-.radio-label {
-  margin-left: 4px;
-  margin-right: 8px;
 }
 .form-field {
   margin: 10px 0;

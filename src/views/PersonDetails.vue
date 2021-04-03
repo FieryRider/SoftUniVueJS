@@ -83,7 +83,6 @@ export default {
     },
   },
   created: function() {
-    console.log(this.$route.params.personId)
     fetch(`https://eu-api.backendless.com/8764A135-6D4C-0237-FF3B-E041AA778300/A5DE6895-9860-4194-A9BD-99EC35D4131D/data/actors/${this.$route.params.personId}?loadRelations=known_for`)
       .then(resp => resp.json())
       .then(data => {

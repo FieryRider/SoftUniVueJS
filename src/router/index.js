@@ -17,7 +17,8 @@ import store from '../store'
 
 Vue.use(VueRouter)
 
-const routes = [{
+const routes = [
+  {
     path: "/",
     component: Home
   },
@@ -101,6 +102,9 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
+  if (from == to)
+    return
+
   /* Deauthenticate user after 120 min */
   const loginTime = parseInt(store.getters.getLoginTime)
   const currentTime = Date.now()
